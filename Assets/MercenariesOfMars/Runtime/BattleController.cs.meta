@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: b4bf0b60ce5c44c7783fb7556194b3eb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - board: {instanceID: 0}
+  - battleCamera: {instanceID: 0}
+  - progressionSettings: {instanceID: 0}
+  - openingEvent: {instanceID: 0}
+  - eventRunner: {instanceID: 0}
+  - weaponMenuFont: {instanceID: 0}
+  - campaign: {fileID: 11400000, guid: 322d2f564e31a4124a4d69f289d4bd5c, type: 2}
+  - defaultPresentation: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

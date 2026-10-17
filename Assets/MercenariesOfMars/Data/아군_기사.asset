@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9833d996fb9434f46a6cca6cfe77892b, type: 3}
+  m_Name: "\uC544\uAD70_\uAE30\uC0AC"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.CharacterDefinition
+  displayName: "\uC544\uAD70 \uAE30\uC0AC"
+  faction: 0
+  mech: {fileID: 11400000, guid: 45186ab63524345b7ada59677fde1ce0, type: 2}
+  pilot: {fileID: 11400000, guid: c7c07f88947854dde8f50de70ef1ca37, type: 2}
+  level: 1
+  mapIcon: {fileID: 0}
+  portraits: []
+  maxHp: 35
+  attack: 10
+  accuracy: 100
+  evasion: 0
+  defense: 4
+  movement: 4
+  range: 1
+  maxEnergy: 10
+  skills:
+  - {fileID: 11400000, guid: db0b3f65f699b46548d0cb7afe19c1fb, type: 2}
+  - {fileID: 11400000, guid: f3f52c8df7824439bb4fbe90d06c544e, type: 2}
+  description: "\uC52C \uC5F0\uACB0 \uD655\uC778\uC6A9 \uC608\uC2DC\uC785\uB2C8\uB2E4. \uCE90\uB9AD\uD130 \uB2A5\uB825\uCE58 \uC5D0\uB514\uD130\uC5D0\uC11C \uC790\uC720\uB86D\uAC8C \uC218\uC815\uD558\uC138\uC694."

@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bd046e5e087a49e8bc68cac8dfc89ac, type: 3}
+  m_Name: "\uC232\uC548\uB0B4"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.EventSequence
+  commands:
+  - kind: 0
+    unitId: 
+    targetId: 
+    skill: {fileID: 0}
+    speaker: "\uC548\uB0B4"
+    speakerCharacter: {fileID: 0}
+    speakerPilot: {fileID: 0}
+    portraitId: 
+    text: "\uC232\uC740 \uC774\uB3D9 \uBE44\uC6A9\uC774 2\uC785\uB2C8\uB2E4. \uC232\uC5D0 \uC120 \uC720\uB2DB\uC740 \uBA85\uC911\uC774 5%p \uB0AE\uC544\uC9C0\uACE0 \uBC29\uC5B4\uB825\uC774 2 \uC99D\uAC00\uD569\uB2C8\uB2E4."
+    seconds: 1
+    amount: 0
+    cell: {x: 0, y: 0}
+    flag: 
+    flagValue: 1
+    jumpTo: 0
+  - kind: 9
+    unitId: 
+    targetId: 
+    skill: {fileID: 0}
+    speaker: 
+    speakerCharacter: {fileID: 0}
+    speakerPilot: {fileID: 0}
+    portraitId: 
+    text: 
+    seconds: 1
+    amount: 0
+    cell: {x: 0, y: 0}
+    flag: 
+    flagValue: 1
+    jumpTo: 0

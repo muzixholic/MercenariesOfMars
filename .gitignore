@@ -107,3 +107,22 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# 로컬 검증 결과와 복구용 백업은 프로젝트 소스와 분리해 보관한다.
+/작업결과/
+
+# 운영체제·IDE의 개인별 생성 파일
+.DS_Store
+._*
+.idea/
+
+# 로컬 환경 변수와 인증 파일
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.p12
+*.pfx
+*.keystore
+*.jks

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993cc02ee6c8943d1b24d022c9063eca, type: 3}
+  m_Name: "\uC801\uAD70_\uCC99\uD6C4\uBCD1_\uD30C\uC77C\uB7FF"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.PilotDefinition
+  displayName: "\uC801\uAD70 \uCC99\uD6C4\uBCD1"
+  level: 1
+  experience: 0
+  attack: 7
+  defense: 2
+  accuracy: 100
+  evasion: 1
+  growthPreset: {fileID: 0}
+  attackGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  defenseGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  accuracyGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  evasionGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  attackAt99: 105
+  defenseAt99: 100
+  accuracyAt99: 198
+  evasionAt99: 99
+  portraits: []
+  description: 

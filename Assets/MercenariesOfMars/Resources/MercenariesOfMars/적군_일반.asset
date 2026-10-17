@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed5768db2e46d446d9011510a9d967c9, type: 3}
+  m_Name: "\uC801\uAD70_\uC77C\uBC18"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.EnemyLevelPreset
+  displayName: "\uC77C\uBC18"
+  multiplier: 1
+  offset: 0
+  experienceMultiplier: 1
+  experienceOffset: 0
+  minimumLevel: 1
+  maximumLevel: 99

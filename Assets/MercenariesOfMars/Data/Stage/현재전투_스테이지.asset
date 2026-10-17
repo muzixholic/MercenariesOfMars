@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da56c29f3802841ed994d40181de8d5b, type: 3}
+  m_Name: "\uD604\uC7AC\uC804\uD22C_\uC2A4\uD14C\uC774\uC9C0"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.StageDefinition
+  displayName: "\uD604\uC7AC \uC804\uD22C"
+  intro: {fileID: 11400000, guid: 6a2dcc8ef638244bc99f3750c338ed3f, type: 2}
+  map: {fileID: 11400000, guid: ad0ee90ad40064cf9a5e55ebb244c9a6, type: 2}
+  outro: {fileID: 0}
+  branches: []
+  defaultDestination:
+    kind: 1
+    stage: {fileID: 0}
+    endingTitle: "\uC791\uC804 \uC644\uB8CC"
+    endingText: "\uC801\uAD70\uC744 \uBAA8\uB450 \uACA9\uD30C\uD588\uC2B5\uB2C8\uB2E4."

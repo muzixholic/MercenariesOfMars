@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e280cd1569a074215a2f1140cc956fcc, type: 3}
+  m_Name: "\uC9C0\uD615\uC608\uC81C\uB9F5"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.BattleMapDefinition
+  displayName: "\uC9C0\uD615\uACFC \uAD6C\uC870\uBB3C \uC608\uC81C"
+  width: 10
+  height: 8
+  cellSize: 1
+  defaultTerrain: {fileID: 11400000, guid: 1816a6695c9ca4ce0816a77e6225da1a, type: 2}
+  terrainCells:
+  - cell: {x: 2, y: 2}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 3, y: 2}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 2, y: 3}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 3, y: 3}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 2, y: 4}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 3, y: 4}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 2, y: 5}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 3, y: 5}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 4, y: 0}
+    terrain: {fileID: 11400000, guid: 00f17c732c4fa49d19cf4ba2050cca84, type: 2}
+  - cell: {x: 4, y: 1}
+    terrain: {fileID: 11400000, guid: 00f17c732c4fa49d19cf4ba2050cca84, type: 2}
+  - cell: {x: 4, y: 4}
+    terrain: {fileID: 11400000, guid: 00f17c732c4fa49d19cf4ba2050cca84, type: 2}
+  - cell: {x: 4, y: 6}
+    terrain: {fileID: 11400000, guid: 00f17c732c4fa49d19cf4ba2050cca84, type: 2}
+  - cell: {x: 4, y: 7}
+    terrain: {fileID: 11400000, guid: 00f17c732c4fa49d19cf4ba2050cca84, type: 2}
+  - cell: {x: 6, y: 4}
+    terrain: {fileID: 11400000, guid: 02e805ca3f3ce4c3b8e29b7fadc3b972, type: 2}
+  - cell: {x: 7, y: 4}
+    terrain: {fileID: 11400000, guid: 02e805ca3f3ce4c3b8e29b7fadc3b972, type: 2}
+  - cell: {x: 0, y: 7}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 1, y: 7}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  - cell: {x: 2, y: 7}
+    terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
+  structures:
+  - cell: {x: 4, y: 3}
+    structure: {fileID: 11400000, guid: 68ebcf6354d89410aae46c989b4b4ebf, type: 2}
+  units:
+  - id: "\uC544\uAD70_\uAE30\uC0AC"
+    character: {fileID: 11400000, guid: 8c2e60a38cfda4db686dde1de4776b9c, type: 2}
+    cell: {x: 1, y: 2}
+    autoEnemyLevel: 1
+    enemyLevelPreset: {fileID: 0}
+  - id: "\uC544\uAD70_\uAD81\uC218"
+    character: {fileID: 11400000, guid: 2eef0cc90bded4e679727a96938f13ac, type: 2}
+    cell: {x: 1, y: 5}
+    autoEnemyLevel: 1
+    enemyLevelPreset: {fileID: 0}
+  - id: "\uC801\uAD70_\uACBD\uBE44\uBCD1"
+    character: {fileID: 11400000, guid: 517c2ea127a784cf6beba3dd1a57dddd, type: 2}
+    cell: {x: 8, y: 2}
+    autoEnemyLevel: 1
+    enemyLevelPreset: {fileID: 0}
+  - id: "\uC801\uAD70_\uCC99\uD6C4\uBCD1"
+    character: {fileID: 11400000, guid: c225887be06534925af1a5a60899b92e, type: 2}
+    cell: {x: 8, y: 5}
+    autoEnemyLevel: 1
+    enemyLevelPreset: {fileID: 0}
+  openingEvent: {fileID: 0}
+  eventRegions:
+  - label: "\uC232 \uC548\uB0B4"
+    area:
+      x: 2
+      y: 2
+      width: 2
+      height: 2
+    sequence: {fileID: 11400000, guid: c0f74457a7bda48ba949b57863a0f3fe, type: 2}
+  victoryCondition: 0
+  goalCell: {x: 0, y: 0}

@@ -1,0 +1,13 @@
+# 텍스트는 Git에서 정규화하고 바이너리 에셋은 그대로 보존한다.
+* text=auto
+*.cs text eol=lf
+*.asmdef text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.psd binary
+*.fbx binary
+*.wav binary
+*.mp3 binary

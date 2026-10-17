@@ -1,0 +1,1 @@
+{"name":"MercenariesOfMars.Tests","references":["MercenariesOfMars.Runtime","MercenariesOfMars.Editor"],"includePlatforms":["Editor"],"optionalUnityReferences":["TestAssemblies"]}
