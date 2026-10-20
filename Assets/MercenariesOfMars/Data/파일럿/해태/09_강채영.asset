@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993cc02ee6c8943d1b24d022c9063eca, type: 3}
+  m_Name: "09_\uAC15\uCC44\uC601"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.PilotDefinition
+  price: 0
+  displayName: "\uAC15\uCC44\uC601"
+  level: 1
+  experience: 0
+  attack: 10
+  defense: 3
+  accuracy: 100
+  evasion: 1
+  growthPreset: {fileID: 0}
+  attackGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  defenseGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  accuracyGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  evasionGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  attackAt99: 108
+  defenseAt99: 101
+  accuracyAt99: 198
+  evasionAt99: 99
+  portraits: []
+  description: "\uC601\uBB38 \uC774\uB984: Kang Chae-young\n\uB098\uC774: 20\uC138\n\uACC4\uAE09: \uD558\uC0AC\n\uB2F4\uB2F9: \uAE30\uB3D9\uC815\uCC30 / \uC120\uD589 \uC218\uC0C9\n\uC18C\uC18D: \uC81C9\uB3C5\uB9BD\uAE30\uB3D9\uC911\uB300 \u300C\uD574\uD0DC(HAETAE)\u300D / \uC544\uB974\uCE74\uB514\uC544 \uD589\uC131 \uBC29\uC704\uAD70 \uC81C4\uAE30\uB3D9\uC5EC\uB2E8\n\uC8FC\uB454\uC9C0: \uC544\uB974\uCE74\uB514\uC544 \uB3D9\uBD80 \uBC31\uB450\uC0B0\uB9E5 \uBC29\uC5B4\uAE30\uC9C0\n\uC8FC\uB825 \uBCD1\uAE30: TMW-11 \u300C\uBC31\uD638\u300D \uBC0F \uC815\uCC30\uD615 TMW-08 \u300C\uAE4C\uCE58\u300D\n\uBD80\uB300 \uD2B9\uC9D5: \uC0B0\uC545\uC804, \uC804\uC790\uC804, \uC2E0\uC18D\uAE30\uB3D9 \uC791\uC804\uC5D0 \uD2B9\uD654\uB41C \uD55C\uAD6D\uACC4 \uAC1C\uCC99\uBBFC \uC911\uC2EC\uC758 \uBD80\uB300\n\n\uB179\uC0C9 \uB2E8\uBC1C\uACFC \uD638\uAE30\uC2EC \uAC00\uB4DD\uD55C \uB208\uBE5B\uC744 \uC9C0\uB2CC \uCD5C\uC5F0\uC18C \uB300\uC6D0.\n\uB4DC\uB860 \uC870\uC885\uACFC \uC9C0\uD615 \uBD84\uC11D \uB2A5\uB825\uC774 \uB9E4\uC6B0 \uB6F0\uC5B4\uB09C \uCC9C\uC7AC\uD615 \uC815\uCC30\uBCD1.\n\uC6D0\uB798\uB294 \uBBFC\uAC04 \uB85C\uBD07 \uACBD\uC9C4\uB300\uD68C\uC5D0\uC11C \uD65C\uC57D\uD558\uB358 \uACF5\uD559\uB3C4\uC600\uB2E4.\n\uC815\uBE44\uBC18\uACFC \uD568\uAED8 \uAE30\uCCB4\uB97C \uBB34\uB2E8 \uAC1C\uC870\uD574 \uC790\uC8FC \uD63C\uB098\uAE30\uB3C4 \uD55C\uB2E4.\n\uC720\uB098\uB97C \uCE5C\uC5B8\uB2C8\uCC98\uB7FC \uB530\uB974\uBA70 \uC5B8\uC820\uAC00 \uC790\uC2E0\uB9CC\uC758 \uC815\uCC30\uAE30\uCCB4\uB97C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uBAA9\uD45C\uB2E4.\n\n\uBD80\uB300 \uAD00\uACC4: \uC81C7\uC911\uB300 \uBC1C\uD0A4\uB9AC\uC640 \uD569\uB3D9\uC791\uC804\uBA85 \u300C\uC30D\uC131\uACC4\uD68D\u300D \uC544\uB798 \uC544\uB974\uCE74\uB514\uC544 \uB3C5\uB9BD\uC804\uC7C1\uC758 \uD575\uC2EC \uC791\uC804\uC744 \uC218\uD589\uD55C\uB2E4. \uBC1C\uD0A4\uB9AC\uB294 \uAC15\uC2B5\uACFC \uC815\uBC00 \uD0C0\uACA9\uC744, \uD574\uD0DC\uB294 \uC0B0\uC545\uAE30\uB3D9\uACFC \uC804\uC790\uC804 \uBC0F \uCE21\uBA74 \uC5C4\uD638\uB97C \uC8FC\uB85C \uB2F4\uB2F9\uD55C\uB2E4."
