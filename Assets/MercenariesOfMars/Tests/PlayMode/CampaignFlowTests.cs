@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -31,12 +32,52 @@ namespace MercenariesOfMars.PlayMode.Tests
             camera.transform.position=new Vector3(2,8,-4);camera.transform.LookAt(new Vector3(2,0,2));
             c.showControls=false;c.automaticEnemy=false;c.enableCombatPresentation=false;
             c.campaign=New<CampaignDefinition>();c.campaign.firstStage=first;c.campaign.initialFunds=12345;
+            c.campaign.initialAllies.AddRange(owned.OfType<StageDefinition>().Where(s=>s.map!=null).SelectMany(s=>s.map.units).Where(p=>p.character.faction==Faction.Ally).Select(p=>p.character).Distinct());
             go.SetActive(true);return c;
         }
         IEnumerator WaitPhase(BattleController c,CampaignPhase phase)
         {for(int i=0;i<60 && c.Campaign.Phase!=phase;i++) yield return null;Assert.That(c.Campaign.Phase,Is.EqualTo(phase),c.Campaign.Error);}
         [UnityTearDown] public IEnumerator Cleanup()
         {foreach(var o in owned) if(o!=null) Object.Destroy(o);owned.Clear();yield return null;}
+        [UnityTest] public IEnumerator 최대개조단계는_캠페인시작값을_읽고_인트로재실행시_중복증가하지않는다()
+        {
+            var stage=Stage("개조 해금");stage.intro=Script(new EventCommand {kind=EventCommandKind.IncreaseMaxUpgradeStage,upgradeStageIncrease=2});
+            var c=Controller(stage);c.campaign.initialMaxUpgradeStage=8;yield return null;
+            Assert.That(c.RestartBattle(),Is.True);yield return WaitPhase(c,CampaignPhase.Battle);
+            Assert.That(c.Campaign.MaxUpgradeStage,Is.EqualTo(10));Assert.That(c.MaxUpgradeStage,Is.EqualTo(10));
+            Assert.That(c.campaign.initialMaxUpgradeStage,Is.EqualTo(8));
+            c.Session.ChangeHp("아군",-999);yield return null;
+            Assert.That(c.RestartBattle(),Is.True);yield return WaitPhase(c,CampaignPhase.Battle);
+            Assert.That(c.Campaign.MaxUpgradeStage,Is.EqualTo(10));
+            Assert.That(c.Campaign.IncreaseMaxUpgradeStage(0),Is.False);Assert.That(c.Campaign.IncreaseMaxUpgradeStage(-1),Is.False);
+        }
+        [UnityTest] public IEnumerator 아웃트로의_개조상한증가는_다음미션의_10단계초과_능력치와_무장에_적용된다()
+        {
+            var first=Stage("첫 작전");var next=Stage("다음 작전");first.defaultDestination=new StageDestination {stage=next};
+            first.outro=Script(new EventCommand {kind=EventCommandKind.IncreaseMaxUpgradeStage,upgradeStageIncrease=5});
+            var definition=next.map.units[0].character;definition.mech=New<MechDefinition>();definition.pilot=New<PilotDefinition>();
+            definition.mech.hpUpgrade=20;definition.mech.weaponUpgrade=20;
+            var weapon=New<SkillDefinition>();weapon.power=1000;definition.mech.weapons.Add(weapon);
+            var c=Controller(first);yield return null;Assert.That(c.campaign.initialMaxUpgradeStage,Is.EqualTo(10));c.RestartBattle();
+            yield return WaitPhase(c,CampaignPhase.Battle);Assert.That(c.Campaign.MaxUpgradeStage,Is.EqualTo(10));
+            c.Session.ChangeHp("적",-999);yield return WaitPhase(c,CampaignPhase.Intermission);
+            Assert.That(c.Campaign.MaxUpgradeStage,Is.EqualTo(15));Assert.That(c.Campaign.Depart(),Is.True);
+            yield return WaitPhase(c,CampaignPhase.Battle);
+            Assert.That(c.Session.Find("아군").MaxHp,Is.EqualTo(1750));Assert.That(c.Session.Find("아군").Skills[0].Power,Is.EqualTo(1750));
+            Assert.That(definition.mech.hpUpgrade,Is.EqualTo(20));Assert.That(weapon.power,Is.EqualTo(1000));
+            c.Session.ChangeHp("아군",-99999);yield return null;c.RestartBattle();yield return WaitPhase(c,CampaignPhase.Battle);
+            Assert.That(c.Campaign.MaxUpgradeStage,Is.EqualTo(15));
+            c.Session.ChangeHp("적",-999);yield return WaitPhase(c,CampaignPhase.Ending);Assert.That(c.ReturnToTitle(),Is.True);
+            Assert.That(c.Campaign.MaxUpgradeStage,Is.EqualTo(10));Assert.That(c.RestartBattle(),Is.True);
+            yield return WaitPhase(c,CampaignPhase.Battle);Assert.That(c.Campaign.MaxUpgradeStage,Is.EqualTo(10));
+        }
+        [UnityTest] public IEnumerator 개조상한_증가는_정수최댓값에서_안전하게_멈춘다()
+        {
+            var stage=Stage("상한 검증");stage.intro=Script(new EventCommand {kind=EventCommandKind.IncreaseMaxUpgradeStage,upgradeStageIncrease=10});
+            var c=Controller(stage);c.campaign.initialMaxUpgradeStage=int.MaxValue-1;yield return null;c.RestartBattle();
+            yield return WaitPhase(c,CampaignPhase.Battle);Assert.That(c.Campaign.MaxUpgradeStage,Is.EqualTo(int.MaxValue));
+            Assert.That(c.Campaign.IncreaseMaxUpgradeStage(int.MaxValue),Is.True);Assert.That(c.Campaign.MaxUpgradeStage,Is.EqualTo(int.MaxValue));
+        }
         [UnityTest] public IEnumerator 인트로_전투_아웃트로_분기_인터미션_다음인트로를_순서대로_진행한다()
         {
             var first=Stage("첫 작전");var special=Stage("구출 작전");var fallback=Stage("기본 작전");

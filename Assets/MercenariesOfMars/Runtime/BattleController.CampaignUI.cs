@@ -48,7 +48,9 @@ namespace MercenariesOfMars
             var rect=TacticalGuiTheme.Centered(1100,680);
             uiTheme.BeginPanel(rect,"인터미션 · "+Campaign.CurrentStage.displayName+" 완료");
             GUILayout.Label("다음 미션  "+Campaign.NextStage.displayName,uiTheme.Heading);
-            GUILayout.Label($"보유 자금  {Campaign.Funds:N0}",uiTheme.Section);
+            GUILayout.Label($"보유 자금  {Campaign.Funds:N0} · 최대 개조 단계  {Campaign.MaxUpgradeStage}",uiTheme.Section);
+            var departure=Campaign.NextDeployment();
+            GUILayout.Label(departure.Error==null?$"다음 미션 선택 출격 가능 {departure.SelectableCount}기 · 출격 칸 {departure.SlotCount} / 선택 후보 {departure.AvailableCount} · 고정·강제 {departure.ForcedCount}기":"출격 정보 확인 필요: "+departure.Error,uiTheme.Muted);
             uiTheme.Separator(); GUILayout.Space(12);
             GUILayout.BeginHorizontal();
             GUILayout.BeginVertical(GUILayout.Width(Mathf.Min(220*TacticalGuiTheme.LayoutScale,rect.width*.3f)));
@@ -63,6 +65,7 @@ namespace MercenariesOfMars
             GUILayout.Label(intermissionPage,uiTheme.Section);
             intermissionScroll=GUILayout.BeginScrollView(intermissionScroll);
             DrawIntermissionPage();
+            if(!string.IsNullOrEmpty(workshopMessage))GUILayout.Label(workshopMessage,uiTheme.Muted);
             GUILayout.EndScrollView(); GUILayout.EndVertical(); GUILayout.EndHorizontal();
             TacticalGuiTheme.EndPanel();
             if(depart && Campaign.Depart()) {intermissionPage="작전 대기";intermissionScroll=Vector2.zero;}
@@ -77,52 +80,38 @@ namespace MercenariesOfMars
         }
         void DrawIntermissionPage()
         {
-            var allies=Campaign.CurrentStage.map.units.Where(p=>p?.character!=null && p.character.faction==Faction.Ally).Select(p=>p.character).Distinct().ToList();
             switch(intermissionPage)
             {
-                case "기체 리스트":
-                    foreach(var d in allies)
-                    {
-                        GUILayout.Label(d.UnitName,uiTheme.Heading);
-                        GUILayout.Label($"파일럿 {d.PilotName} · HP {(d.mech!=null?d.mech.maxHp:d.maxHp)} · EN {d.UnitMaxEnergy} · 이동력 {d.UnitMovement}");
-                        GUILayout.Label("무장  "+string.Join(" / ",d.Weapons.Where(w=>w!=null).Select(w=>w.displayName)),uiTheme.Muted);
-                        uiTheme.Separator();
-                    }
+                case "기체 리스트":case "기체 개조":case "무장 변경":case "파일럿 변경":
+                    var mech=DrawWorkshopMechs();if(mech==null)break;
+                    if(intermissionPage=="기체 개조")DrawUpgradeMenu(mech);
+                    else if(intermissionPage=="무장 변경")DrawWeaponChange(mech);
+                    else if(intermissionPage=="파일럿 변경")DrawPilotChange(mech);
+                    else{DrawMechDetails(mech);GUILayout.Label("무장  "+string.Join(" / ",mech.weapons.Where(w=>w!=null).Select(w=>w.displayName)));}
                     break;
-                case "파일럿 리스트":
-                    foreach(var d in allies)
-                    {
-                        GUILayout.Label(d.PilotName,uiTheme.Heading);
-                        GUILayout.Label($"Lv.{(d.pilot!=null?d.pilot.level:d.level)} · 탑승 기체 {d.UnitName}");
-                        if(d.pilot!=null) GUILayout.Label($"경험치 {d.pilot.experience}",uiTheme.Muted);
-                        uiTheme.Separator();
-                    }
-                    break;
-                case "설정":
-                    board.showGrid=GUILayout.Toggle(board.showGrid,"격자 표시",GUI.skin.button);
-                    enableCombatPresentation=GUILayout.Toggle(enableCombatPresentation,"전투 연출",GUI.skin.button);
-                    GUILayout.Label($"음량 {Mathf.RoundToInt(AudioListener.volume*100)}%");
-                    AudioListener.volume=GUILayout.HorizontalSlider(AudioListener.volume,0,1);
-                    break;
+                case "파일럿 리스트":DrawPilotList();break;
+                case "기체 상점":DrawShop(Campaign.ShopMechs);break;
+                case "무장 상점":DrawShop(Campaign.ShopWeapons);break;
+                case "파일럿 상점":DrawShop(Campaign.ShopPilots);break;
+                case "저장":DrawSaveSlots(false);break;
+                case "불러오기":DrawSaveSlots(true);break;
+                case "설정":DrawPersistentSettings();break;
                 case "종료":
-                    GUILayout.Label("게임을 종료합니다.");
-                    if(GUILayout.Button("종료",GUILayout.Height(40)))
+                    if(GUILayout.Button("타이틀로 돌아가기",GUILayout.Height(40)))AskWorkshop("저장하지 않은 진행은 사라집니다. 타이틀로 돌아갑니다.",()=>ReturnToTitle());
+                    if(GUILayout.Button("게임 종료",GUILayout.Height(40)))AskWorkshop("저장하지 않은 진행은 사라집니다. 게임을 종료합니다.",()=>
                     {
 #if UNITY_EDITOR
                         UnityEditor.EditorApplication.isPlaying=false;
 #else
                         Application.Quit();
 #endif
-                    }
+                    });
                     break;
-                case "기체 개조": case "무장 변경": case "파일럿 변경": case "저장": case "불러오기":
-                    GUILayout.Label("아직 사용할 수 없는 메뉴입니다.",uiTheme.Muted); break;
-                case "기체 상점": case "무장 상점": case "파일럿 상점":
-                    GUILayout.Label("등록된 판매 품목이 없습니다.",uiTheme.Muted); break;
                 default:
                     GUILayout.Label("다음 작전을 준비하세요.",uiTheme.Heading);
-                    GUILayout.Label("기체와 파일럿 정보를 확인하거나 설정을 변경할 수 있습니다. 준비가 끝나면 다음 미션을 선택하세요.");
-                    if(Campaign.LastResult!=null) GUILayout.Label($"이전 작전: {Campaign.LastResult.ClearTurns}턴 · 적 격추 {Campaign.LastResult.DefeatedEnemies}기",uiTheme.Muted);
+                    GUILayout.Label("기체 개조, 장비와 파일럿 배정, 상점 구매를 마친 뒤 다음 미션을 선택하세요.");
+                    GUILayout.Label("구매한 기체와 파일럿은 파일럿 변경에서 편성해야 선택 출격할 수 있습니다.",uiTheme.Muted);
+                    if(Campaign.LastResult!=null)GUILayout.Label($"이전 작전: {Campaign.LastResult.ClearTurns}턴 · 적 격추 {Campaign.LastResult.DefeatedEnemies}기",uiTheme.Muted);
                     break;
             }
         }

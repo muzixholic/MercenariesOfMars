@@ -7,6 +7,9 @@ namespace MercenariesOfMars
     [CreateAssetMenu(menuName="화성의 용병단/파일럿",fileName="새 파일럿")]
     public sealed class PilotDefinition : ScriptableObject
     {
+        [System.NonSerialized] internal PilotDefinition sourceDefinition;
+        public PilotDefinition SourceDefinition=>sourceDefinition!=null?sourceDefinition:this;
+        [Min(0),InspectorName("영입 가격")] public int price;
         public string displayName="새 파일럿";
         [Range(1,99)] public int level=1;
         [Min(0)] public int experience;

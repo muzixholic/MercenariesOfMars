@@ -15,3 +15,7 @@ MonoBehaviour:
   displayName: "\uD654\uC131\uC758 \uC6A9\uBCD1\uB2E8"
   firstStage: {fileID: 11400000, guid: be661b97a2ffc447d94d2a410d334298, type: 2}
   initialFunds: 500000
+  initialMaxUpgradeStage: 10
+  initialAllies:
+  - {fileID: 11400000, guid: 8c2e60a38cfda4db686dde1de4776b9c, type: 2}
+  - {fileID: 11400000, guid: 2eef0cc90bded4e679727a96938f13ac, type: 2}

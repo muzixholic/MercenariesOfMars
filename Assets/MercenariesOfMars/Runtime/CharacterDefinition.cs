@@ -44,8 +44,9 @@ namespace MercenariesOfMars
         // 기존 데이터의 참조와 저장값을 보존하기 위해 이전 필드를 유지한다.
         public string UnitName=>mech!=null?mech.displayName:displayName;
         public string PilotName=>pilot!=null?pilot.displayName:displayName;
-        public int UnitMovement=>mech!=null?mech.movement:movement;
-        public int UnitMaxEnergy=>mech!=null?mech.maxEnergy:maxEnergy;
+        public int UnitMaxHp=>mech!=null?mech.EffectiveMaxHp:maxHp;
+        public int UnitMovement=>mech!=null?Mathf.Clamp(mech.movement,1,99):movement;
+        public int UnitMaxEnergy=>mech!=null?mech.EffectiveMaxEnergy:maxEnergy;
         public IReadOnlyList<SkillDefinition> Weapons=>mech!=null?mech.weapons:skills;
         public IReadOnlyList<CharacterPortrait> DialoguePortraits=>pilot!=null?pilot.portraits:portraits;
         public Sprite FindPortrait(string id) => pilot!=null?pilot.FindPortrait(id):string.IsNullOrEmpty(id) ? null : portraits?.FirstOrDefault(p => p != null && p.id == id)?.sprite;

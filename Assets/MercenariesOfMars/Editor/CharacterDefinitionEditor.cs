@@ -64,10 +64,17 @@ namespace MercenariesOfMars.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("displayName"),new GUIContent("편성 이름"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("faction"),new GUIContent("기본 진영"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("mech"),new GUIContent("기체"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("pilot"),new GUIContent("파일럿"));
+            var mech=serializedObject.FindProperty("mech");var pilot=serializedObject.FindProperty("pilot");
+            var previousMech=mech.objectReferenceValue;var previousPilot=pilot.objectReferenceValue;
+            mech.objectReferenceValue=UnitFormationCreation.MechSelector(mech.objectReferenceValue as MechDefinition);
+            pilot.objectReferenceValue=UnitFormationCreation.PilotSelector(pilot.objectReferenceValue as PilotDefinition);
+            if((previousMech!=mech.objectReferenceValue || previousPilot!=pilot.objectReferenceValue) && mech.objectReferenceValue!=null && pilot.objectReferenceValue!=null)
+                serializedObject.FindProperty("displayName").stringValue=UnitFormationCreation.SuggestedName(mech.objectReferenceValue as MechDefinition,pilot.objectReferenceValue as PilotDefinition);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("displayName"),new GUIContent("편성 이름"));
+            using(new EditorGUI.DisabledScope(mech.objectReferenceValue==null || pilot.objectReferenceValue==null))
+                if(GUILayout.Button("기체·파일럿 이름으로 맞추기"))
+                    serializedObject.FindProperty("displayName").stringValue=UnitFormationCreation.SuggestedName(mech.objectReferenceValue as MechDefinition,pilot.objectReferenceValue as PilotDefinition);
             serializedObject.ApplyModifiedProperties();
             var character = (CharacterDefinition)target;
             if(character.mech!=null || character.pilot!=null)

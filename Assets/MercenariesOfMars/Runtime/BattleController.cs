@@ -14,6 +14,14 @@ namespace MercenariesOfMars
         [InspectorName("시작 칸")] public Vector2Int cell;
         [InspectorName("적군 자동 레벨")] public bool autoEnemyLevel=true;
         [InspectorName("적군 레벨 보정（미지정 시 기본）")] public EnemyLevelPreset enemyLevelPreset;
+        [InspectorName("배치 조건 결합")] public DeploymentConditionMatch conditionMatch;
+        [InspectorName("배치 조건（비어 있으면 항상 배치）")] public List<DeploymentCondition> conditions=new();
+        public bool MeetsConditions(IReadOnlyList<CharacterDefinition> roster,Func<string,bool> flag,IReadOnlyList<MechDefinition> mechs=null,IReadOnlyList<PilotDefinition> pilots=null)
+            =>conditions==null || conditions.Count==0 || (conditionMatch==DeploymentConditionMatch.Any
+                ?conditions.Any(c=>c.Matches(roster,flag,mechs,pilots)):conditions.All(c=>c.Matches(roster,flag,mechs,pilots)));
+        public UnitPlacement Copy(CharacterDefinition definition=null)=>new() {id=id,character=definition??character,cell=cell,
+            autoEnemyLevel=autoEnemyLevel,enemyLevelPreset=enemyLevelPreset,conditionMatch=conditionMatch,
+            conditions=conditions?.Select(c=>c==null?null:new DeploymentCondition {kind=c.kind,flag=c.flag,ally=c.ally,mech=c.mech,pilot=c.pilot,expected=c.expected}).ToList()??new()};
     }
 
     public enum UnitCommandMode { None, Move, Attack, SkillSelection }
@@ -31,6 +39,7 @@ namespace MercenariesOfMars
         [InspectorName("공통 게임 UI 글꼴（미지정 시 시스템 글꼴）")] public Font weaponMenuFont;
         [InspectorName("캠페인（미지정 시 기존 단일 전투）")] public CampaignDefinition campaign;
         public CampaignFlow Campaign { get; private set; }
+        public int MaxUpgradeStage=>IsCampaignActive?Campaign.MaxUpgradeStage:10;
         public bool IsCampaignActive=>!IsMapTest && !IsTitleScreen && Campaign!=null && Campaign.Phase!=CampaignPhase.Inactive;
         public BattleSession Session { get; private set; }
         public bool RequireConfirmation { get; set; } = true;
@@ -55,7 +64,7 @@ namespace MercenariesOfMars
         { exitMapTest = onExit ?? throw new ArgumentNullException(nameof(onExit)); mapTestExitRequested = false; }
         public bool ExitMapTest()
         {
-            if (!isActiveAndEnabled || !ShowsMapTestExit || mapTestExitRequested) return false;
+            if (!isActiveAndEnabled || !IsMapTest || (!ShowsMapTestExit && !IsDeploying && !HasFormationNotice) || mapTestExitRequested) return false;
             mapTestExitRequested = true; exitMapTest(); return true;
         }
         [InspectorName("전투 연출 사용")] public bool enableCombatPresentation = true;
@@ -286,19 +295,35 @@ namespace MercenariesOfMars
                 {
                     var issues = board.map.ValidateMap();
                     if (issues.Count > 0) throw new InvalidOperationException(string.Join("\n", issues));
-                    board.LoadMap(true); placements = board.map.units.ToList();
+                    board.LoadMap(true);
                     openingEvent=IsCampaignActive?Campaign.CurrentStage.intro:board.map.openingEvent;
                     if (eventRunner == null) eventRunner = GetComponent<EventRunner>() ?? gameObject.AddComponent<EventRunner>();
+                    if(rosterDeployment==null)
+                    {
+                        var roster=IsCampaignActive?Campaign.RecruitedAllies:board.map.testRecruitedAllies;
+                        // 기존 단독 맵 테스트는 명단이 비어 있으면 고정 아군으로 시험한다. 캠페인은 항상 영입 목록을 요구한다.
+                        rosterDeployment=IsCampaignActive?Campaign.ResolveDeployment(board.map,eventRunner.GetFlag):new RosterDeployment(board.map,roster,eventRunner.GetFlag,roster.Count>0);
+                        if(rosterDeployment.Notices.Count==0 && IsCampaignActive)Campaign.ApplyDeploymentRoster(rosterDeployment);
+                    }
+                    if(HasFormationNotice)return;
+                    placements=deploymentPlacements??rosterDeployment.Placements.ToList();
                 }
                 firedRegions.Clear();
                 if (battleCamera == null) battleCamera = Camera.main;
                 if (battleCamera == null) throw new InvalidOperationException("전투 카메라를 지정하세요.");
                 if (MapCamera == null) MapCamera = GetComponent<BattleMapCamera>() ?? gameObject.AddComponent<BattleMapCamera>();
                 MapCamera.Configure(battleCamera, board);
+                if(board.map!=null && board.map.deploymentSlots.Count>0 && deploymentPlacements==null)
+                {
+                    Deployment=new AllyDeploymentPlan(board.map,IsCampaignActive?Campaign.RecruitedAllies:board.map.testRecruitedAllies,eventRunner.GetFlag,rosterDeployment,ally=>IsCampaignActive && Campaign.IsDeploymentBlocked(ally));
+                    selectedDeploymentSlot=Deployment.Slots[0].id;
+                    board.SetMovementHighlights(Deployment.Slots.Select(s=>s.cell));
+                    return;
+                }
                 if (!placements.Any(p => p.character != null && p.character.faction == Faction.Ally)
                     || !placements.Any(p => p.character != null && p.character.faction == Faction.Enemy))
                     throw new InvalidOperationException("아군과 적군을 각각 한 명 이상 배치하세요.");
-                Session = new BattleSession(board.CreateGrid(), BattleUnitFactory.Create(placements,progressionSettings), requireConfirmation: RequireConfirmation,
+                Session = new BattleSession(board.CreateGrid(), BattleUnitFactory.Create(placements,progressionSettings,MaxUpgradeStage), requireConfirmation: RequireConfirmation,
                     victoryCell: board.map != null && board.map.victoryCondition == MapVictoryCondition.ReachCell ? board.map.goalCell : null);
                 shownRound = 0;
                 foreach (var unit in Session.Units)
@@ -321,7 +346,7 @@ namespace MercenariesOfMars
                     views.Add(unit, view.transform);
                 }
                 Session.Changed += SyncViews; SyncViews();
-                if (openingEvent != null && (eventRunner == null || !eventRunner.Play(openingEvent, Session)))
+                if (openingEvent != null && (eventRunner == null || !eventRunner.Play(openingEvent, Session,IsCampaignActive?Campaign:null)))
                     error = eventRunner == null ? "시작 이벤트의 실행기를 지정하세요." : eventRunner.LastError;
             }
             catch (Exception exception) { error = exception.Message; Session = null; Debug.LogError("전투 초기화 실패: " + error, this); }
@@ -356,6 +381,8 @@ namespace MercenariesOfMars
         }
         void Update()
         {
+            if(HasFormationNotice)return;
+            if(IsDeploying) {HandleDeploymentInput();return;}
             if(IsCampaignActive) Campaign.Tick();
             if(IsCampaignActive && Campaign.UsesFullScreen) { MapCamera?.CancelPointer(); return; }
             if (IsTitleScreen || IsGameOver || IsVictory)
@@ -370,7 +397,7 @@ namespace MercenariesOfMars
             {
                 var region = board.map.eventRegions.FirstOrDefault(r => r != null && r.sequence != null && !firedRegions.Contains(r)
                     && Session.Units.Any(u => u.IsAlive && u.Faction == Faction.Ally && r.area.Contains(u.Cell)));
-                if (region != null) { firedRegions.Add(region); eventRunner.Play(region.sequence, Session); }
+                if (region != null) { firedRegions.Add(region); eventRunner.Play(region.sequence, Session,IsCampaignActive?Campaign:null); }
             }
             if (Session?.PendingAttack != null)
             {
@@ -523,6 +550,8 @@ namespace MercenariesOfMars
         }
         bool ResetBattleState(IReadOnlyDictionary<string,bool> flags)
         {
+            ReleaseDeployment();
+            Deployment=null;deploymentPlacements=null;deploymentScroll=Vector2.zero;ClearSelection();
             if (eventRunner != null) { eventRunner.ResetState(); eventRunner.RestoreFlags(flags); }
             if (Session != null) Session.Changed -= SyncViews;
             Session = null;
@@ -535,14 +564,17 @@ namespace MercenariesOfMars
             if (board != null) board.ClearMovementHighlights();
             choosingCounterSkill = false; error = null; scroll = Vector2.zero; confirmationScroll = Vector2.zero;
             nextEnemyAction = Time.unscaledTime + .4f; IsTitleScreen = false;
+            if(IsCampaignActive && !eventRunner.RunDeploymentSetup(Campaign.CurrentStage.deploymentSetup,Campaign))
+            {error=eventRunner.LastError;return false;}
             InitializeBattle();
-            return Session != null;
+            return Session != null || IsDeploying || HasFormationNotice;
         }
         public bool ReturnToTitle()
         {
-            if (!isActiveAndEnabled || (!IsGameOver && !IsVictory && !(IsCampaignActive && Campaign.UsesFullScreen))) return false;
+            if (!isActiveAndEnabled || (!IsGameOver && !IsVictory && !IsDeploying && !HasFormationNotice && !(IsCampaignActive && Campaign.UsesFullScreen))) return false;
             if (eventRunner != null) eventRunner.ResetState();
-            Campaign?.Stop();
+            ReleaseDeployment();Campaign?.Stop();
+            Deployment=null;deploymentPlacements=null;
             selected = null; inspectedEnemy = null; selectedSkill = null; IsTitleScreen = true; CommandMode = UnitCommandMode.None;
             if (board != null) board.ClearMovementHighlights();
             return true;
@@ -571,6 +603,7 @@ namespace MercenariesOfMars
             else
             {
                 restart=GUILayout.Button(IsTitleScreen?"전투 시작":"다시 시작",uiTheme.Primary,GUILayout.Height(44));
+                if(IsTitleScreen && !IsMapTest && !IsStageTest && GUILayout.Button("불러오기",GUILayout.Height(36))){titleLoadOpen=true;workshopMessage=null;}
                 if(!IsTitleScreen) titleRequested=GUILayout.Button("타이틀로 돌아가기",GUILayout.Height(40));
             }
             GUILayout.FlexibleSpace(); TacticalGuiTheme.EndPanel();
@@ -785,6 +818,11 @@ namespace MercenariesOfMars
         }
         void DrawGameGUI()
         {
+            LoadPreferences();
+            if(workshopConfirmation!=null){DrawWorkshopConfirmation();return;}
+            if(IsTitleScreen && titleLoadOpen){DrawTitleLoad();return;}
+            if(HasFormationNotice){dialoguePortraitUI?.Hide();if(showControls)DrawFormationNotice();return;}
+            if(IsDeploying) {dialoguePortraitUI?.Hide();if(showControls) DrawDeployment();return;}
             if(IsCampaignActive && Campaign.UsesFullScreen)
             { dialoguePortraitUI?.Hide(); if(showControls) DrawCampaignScreen(); return; }
             if (IsTitleScreen || IsGameOver || IsVictory || !showControls || Session == null || Session.IsPresenting
@@ -856,6 +894,7 @@ namespace MercenariesOfMars
         }
         void OnDestroy()
         {
+            ReleaseDeployment();Campaign?.Stop();
             uiTheme?.Dispose();
             if (Session != null) Session.Changed -= SyncViews;
             foreach (var material in materials) if (material != null) Destroy(material);

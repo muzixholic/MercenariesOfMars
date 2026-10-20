@@ -18,7 +18,7 @@ namespace MercenariesOfMars.PlayMode.Tests
             for(int i=0;i<2;i++)
             {
                 var d=New<CharacterDefinition>(); d.faction=i==0?Faction.Ally:Faction.Enemy; d.mech=New<MechDefinition>(); d.pilot=New<PilotDefinition>(); d.pilot.accuracy=999;
-                d.mech.maxHp=100; d.mech.maxEnergy=40;
+                d.mech.maxHp=1000; d.mech.maxEnergy=40;
                 if(i==0) for(int n=0;n<count;n++)
                 {
                     var s=New<SkillDefinition>(); s.displayName="무장 "+n; s.power=3; s.energyCost=2; s.maxRange=3;
@@ -150,7 +150,7 @@ namespace MercenariesOfMars.PlayMode.Tests
             Assert.That(ui.ConfirmFocused(),Is.True); Assert.That(ui.IsRendered,Is.False);
             Assert.That(c.Session.IsAwaitingConfirmation,Is.True);
             Assert.That(c.Session.PendingAttack.Decision.CounterSkill,Is.SameAs(ally.Skills[3]));
-            Assert.That(ally.Energy,Is.EqualTo(40)); Assert.That(ally.Hp,Is.EqualTo(100));
+            Assert.That(ally.Energy,Is.EqualTo(40)); Assert.That(ally.Hp,Is.EqualTo(1000));
             c.CancelCombat(); c.OpenCounterWeaponSelection();
             Assert.That(ui.IsRendered,Is.True); c.ChooseReaction(ReactionChoice.Defend);
             Assert.That(ui.IsRendered,Is.False);

@@ -11,7 +11,10 @@ namespace MercenariesOfMars
         [InspectorName("체력 변경")] ChangeHp, [InspectorName("플래그 설정")] SetFlag,
         [InspectorName("플래그 조건 분기")] BranchFlag, [InspectorName("체력 조건 분기")] BranchHp,
         [InspectorName("이동")] Move, [InspectorName("공격")] Attack,
-        [InspectorName("턴 종료")] EndTurn, [InspectorName("이벤트 종료")] Stop
+        [InspectorName("턴 종료")] EndTurn, [InspectorName("이벤트 종료")] Stop,
+        [InspectorName("최대 개조 단계 증가")] IncreaseMaxUpgradeStage,
+        [InspectorName("아군 영입")] RecruitAlly,[InspectorName("아군 이탈")] RemoveAlly,
+        [InspectorName("이번 스테이지 출격 선택 제한")] SetDeploymentBlocked
     }
     [Serializable]
     public sealed class EventCommand
@@ -30,6 +33,9 @@ namespace MercenariesOfMars
         [TextArea, InspectorName("대사 내용")] public string text;
         [Min(0), InspectorName("대기 시간(초)")] public float seconds = 1;
         [InspectorName("체력 변화 / 체력 이하 조건")] public int amount;
+        [Min(1), InspectorName("최대 개조 단계 증가량")] public int upgradeStageIncrease=1;
+        [InspectorName("영입·이탈 아군 편성")] public CharacterDefinition rosterAlly;
+        [InspectorName("출격 선택 제한（끄면 다시 허용）")] public bool deploymentBlocked=true;
         [InspectorName("목적지")] public Vector2Int cell;
         [InspectorName("플래그 이름")] public string flag;
         [InspectorName("플래그 값")] public bool flagValue = true;
@@ -60,7 +66,23 @@ namespace MercenariesOfMars
                     errors.Add($"명령 {i}: 플래그 이름이 필요합니다.");
                 if (c.kind == EventCommandKind.Wait && (float.IsNaN(c.seconds) || float.IsInfinity(c.seconds) || c.seconds < 0))
                     errors.Add($"명령 {i}: 대기 시간은 유효한 0 이상의 수여야 합니다.");
+                if(c.kind==EventCommandKind.IncreaseMaxUpgradeStage && c.upgradeStageIncrease<=0)
+                    errors.Add($"명령 {i}: 최대 개조 단계 증가량은 1 이상이어야 합니다.");
+                if(c.kind==EventCommandKind.RecruitAlly || c.kind==EventCommandKind.RemoveAlly || c.kind==EventCommandKind.SetDeploymentBlocked)
+                {
+                    if(c.rosterAlly==null || c.rosterAlly.faction!=Faction.Ally)errors.Add($"명령 {i}: 영입·이탈 대상에 아군 편성을 지정하세요.");
+                    else errors.AddRange(c.rosterAlly.ValidateAssignment().Select(e=>$"명령 {i}: {e}"));
+                }
             }
+            return errors;
+        }
+        public List<string> ValidateDeploymentSetup()
+        {
+            var errors=ValidateCommands();
+            if(commands!=null)for(int i=0;i<commands.Count;i++)
+                if(commands[i]!=null && commands[i].kind is not (EventCommandKind.SetFlag or EventCommandKind.BranchFlag or EventCommandKind.Stop
+                    or EventCommandKind.RecruitAlly or EventCommandKind.RemoveAlly or EventCommandKind.IncreaseMaxUpgradeStage or EventCommandKind.SetDeploymentBlocked))
+                    errors.Add($"명령 {i}: 출격 준비에서는 플래그·영입·이탈·개조 해금·출격 제한·플래그 분기·종료만 사용할 수 있습니다.");
             return errors;
         }
     }

@@ -16,7 +16,9 @@ namespace MercenariesOfMars.Editor
             ["size"] = "차지하는 칸 수", ["blocksMovement"] = "이동 차단", ["prefab"] = "모델 프리팹",
             ["cell"] = "기준 칸", ["terrain"] = "지형", ["structure"] = "구조물", ["label"] = "구역 이름", ["area"] = "영역",
             ["sequence"] = "진입 이벤트", ["id"] = "유닛 ID", ["character"] = "전투 유닛 편성",
-            ["autoEnemyLevel"]="적군 자동 레벨", ["enemyLevelPreset"]="적군 레벨 보정"
+            ["autoEnemyLevel"]="적군 자동 레벨", ["enemyLevelPreset"]="적군 레벨 보정",
+            ["conditions"]="배치 조건（비어 있으면 항상 배치）",["conditionMatch"]="배치 조건 결합",
+            ["deploymentSlots"]="아군 출격 칸", ["testRecruitedAllies"]="단독 테스트용 영입 아군"
         };
         public static GUIContent Label(string name) => new(Labels.TryGetValue(name, out var text) ? text : name);
         public static void Field(SerializedObject so, string name) => EditorGUILayout.PropertyField(so.FindProperty(name), Label(name), true);
@@ -72,5 +74,6 @@ namespace MercenariesOfMars.Editor
     [CustomPropertyDrawer(typeof(TerrainCell))] public sealed class TerrainCellDrawer : MapEntryDrawer { protected override string[] Fields => new[] { "cell", "terrain" }; }
     [CustomPropertyDrawer(typeof(StructurePlacement))] public sealed class StructurePlacementDrawer : MapEntryDrawer { protected override string[] Fields => new[] { "cell", "structure" }; }
     [CustomPropertyDrawer(typeof(MapEventRegion))] public sealed class MapEventRegionDrawer : MapEntryDrawer { protected override string[] Fields => new[] { "label", "area", "sequence" }; }
-    [CustomPropertyDrawer(typeof(UnitPlacement))] public sealed class UnitPlacementDrawer : MapEntryDrawer { protected override string[] Fields => new[] { "id", "character", "cell", "autoEnemyLevel", "enemyLevelPreset" }; }
+    [CustomPropertyDrawer(typeof(UnitPlacement))] public sealed class UnitPlacementDrawer : MapEntryDrawer { protected override string[] Fields => new[] { "id", "character", "cell", "autoEnemyLevel", "enemyLevelPreset", "conditionMatch", "conditions" }; }
+    [CustomPropertyDrawer(typeof(AllyDeploymentSlot))] public sealed class AllyDeploymentSlotDrawer : MapEntryDrawer { protected override string[] Fields=>new[]{"id","cell"}; }
 }

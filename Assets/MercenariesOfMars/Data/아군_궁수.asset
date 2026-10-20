@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: "\uC544\uAD70 \uAD81\uC218"
   faction: 0
   mech: {fileID: 11400000, guid: d038d19a81ecc425598911fa767581d4, type: 2}
-  pilot: {fileID: 11400000, guid: 716cfc6c6cb9a430b84e33f156b91627, type: 2}
+  pilot: {fileID: 11400000, guid: e0203f667231843a89fda33a4624d58b, type: 2}
   level: 1
   mapIcon: {fileID: 0}
   portraits: []

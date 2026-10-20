@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993cc02ee6c8943d1b24d022c9063eca, type: 3}
+  m_Name: "08_\uC0AC\uCFE0\uB77C\uAE30_\uC5D0\uB9AC\uCE74"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.PilotDefinition
+  displayName: "\uC0AC\uCFE0\uB77C\uAE30 \uC5D0\uB9AC\uCE74"
+  level: 1
+  experience: 0
+  attack: 10
+  defense: 3
+  accuracy: 100
+  evasion: 1
+  growthPreset: {fileID: 0}
+  attackGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  defenseGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  accuracyGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  evasionGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  attackAt99: 108
+  defenseAt99: 101
+  accuracyAt99: 198
+  evasionAt99: 99
+  portraits:
+  - id: 733ee0ed29bd40e9a2207621578ad880
+    label: "\uAE30\uBCF8"
+    sprite: {fileID: -5969276581442295904, guid: a36874f9ef0f347c0a7fedcb9184aa46, type: 3}
+  description: "\uB098\uC774: 28\uC138\n\uACC4\uAE09: \uB300\uC704\n\uB2F4\uB2F9: \uC911\uD654\uAE30 / \uD3EC\uACA9\uC9C0\uC6D0\n\uC18C\uC18D: \uC81C7\uB3C5\uB9BD\uAE30\uB3D9\uC911\uB300 \uBC1C\uD0A4\uB9AC\n\uC678\uD615: \uAE34 \uAE08\uBC1C \uD3EC\uB2C8\uD14C\uC77C, \uC790\uC2E0\uAC10 \uB118\uCE58\uB294 \uD45C\uC815\n\n\uC911\uB300\uC5D0\uC11C \uAC00\uC7A5 \uD48D\uBD80\uD55C \uC2E4\uC804 \uACBD\uD5D8\uC744 \uAC00\uC9C4 \uBCA0\uD14C\uB791 \uD30C\uC77C\uB7FF.\n\uC911\uD654\uAE30 \uC6B4\uC6A9\uACFC \uC7A5\uAC70\uB9AC \uD3EC\uACA9 \uC804\uC220\uC5D0 \uB6F0\uC5B4\uB09C \uB2A5\uB825\uC744 \uBC1C\uD718\uD55C\uB2E4.\n\uD3C9\uC18C\uC5D0\uB294 \uC5EC\uC720\uB86D\uC9C0\uB9CC \uC804\uD22C\uAC00 \uC2DC\uC791\uB418\uBA74 \uBB34\uC12D\uAC8C \uB3CC\uBCC0\uD55C\uB2E4.\n\uC774\uC804 \uBD80\uB300\uC5D0\uC11C '\uD669\uAE08\uC758 \uC0AC\uC2E0'\uC774\uB77C\uB294 \uBCC4\uBA85\uC73C\uB85C \uBD88\uB838\uB2E4.\n\uB808\uC774\uB098\uAC00 \uACE0\uBBFC\uD560 \uB54C\uB9C8\uB2E4 \uD604\uC2E4\uC801\uC778 \uC870\uC5B8\uC744 \uD574\uC8FC\uB294 \uB4E0\uB4E0\uD55C \uC120\uBC30\uB2E4.\n\n\uAD00\uACC4: \uB808\uC774\uB098\uC758 \uC815\uC2E0\uC801\uC778 \uBC84\uD300\uBAA9.\n\uB300\uD45C \uB300\uC0AC: \u201C\uD654\uB825 \uBD80\uC871? \uAC71\uC815 \uB9C8. \uB0B4\uAC00 \uC804\uBD80 \uB0A0\uB824\uBC84\uB9B4 \uD14C\uB2C8\uAE4C.\u201D"

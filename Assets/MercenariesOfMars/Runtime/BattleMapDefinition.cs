@@ -27,6 +27,11 @@ namespace MercenariesOfMars
         [InspectorName("영역")] public RectInt area = new(0, 0, 1, 1);
         [InspectorName("실행 이벤트（아군 진입 시 1회）")] public EventSequence sequence;
     }
+    [Serializable] public sealed class AllyDeploymentSlot
+    {
+        [InspectorName("출격 유닛 ID")] public string id="출격1";
+        [InspectorName("배치 칸")] public Vector2Int cell;
+    }
     public enum MapVictoryCondition
     {
         [InspectorName("적 전멸")] EliminateEnemies,
@@ -43,6 +48,8 @@ namespace MercenariesOfMars
         [InspectorName("칠한 지형")] public List<TerrainCell> terrainCells = new();
         [InspectorName("구조물 배치")] public List<StructurePlacement> structures = new();
         [InspectorName("유닛 배치")] public List<UnitPlacement> units = new();
+        [InspectorName("아군 출격 칸")] public List<AllyDeploymentSlot> deploymentSlots = new();
+        [InspectorName("단독 테스트용 영입 아군")] public List<CharacterDefinition> testRecruitedAllies = new();
         [InspectorName("시작 이벤트")] public EventSequence openingEvent;
         [InspectorName("진입 이벤트 구역")] public List<MapEventRegion> eventRegions = new();
         [InspectorName("승리 조건")] public MapVictoryCondition victoryCondition;
@@ -61,8 +68,11 @@ namespace MercenariesOfMars
         {
             if (definition == null || definition.size.x < 1 || definition.size.y < 1) return false;
             return new StructurePlacement { cell = cell, structure = definition }.Cells().All(c => Contains(c)
-                && StructureAt(c) == null && !units.Any(u => u != null && u.cell == c));
+                && StructureAt(c) == null && !units.Any(u => u != null && u.cell == c)
+                && !deploymentSlots.Any(s=>s!=null && s.cell==c));
         }
+        public bool CanPlaceDeploymentSlot(Vector2Int cell)=>CreateGrid().IsWalkable(cell) && StructureAt(cell)==null
+            && !units.Any(u=>u!=null && u.cell==cell) && !deploymentSlots.Any(s=>s!=null && s.cell==cell);
         public BattleGrid CreateGrid()
         {
             var blocked = structures.Where(s => s?.structure != null && s.structure.blocksMovement).SelectMany(s => s.Cells());
@@ -77,6 +87,7 @@ namespace MercenariesOfMars
         public List<string> ValidateMap()
         {
             var errors = new List<string>();
+            if(deploymentSlots==null || testRecruitedAllies==null) {errors.Add("출격 칸과 테스트 영입 목록을 초기화하세요.");return errors;}
             if (width < 1 || height < 1 || width > 64 || height > 64 || !float.IsFinite(cellSize) || cellSize < .1f)
             { errors.Add("맵 크기는 1~64칸, 칸 크기는 0.1 이상이어야 합니다."); return errors; }
             var grid = CreateGrid(); var occupied = new HashSet<Vector2Int>(); var ids = new HashSet<string>();
@@ -98,10 +109,23 @@ namespace MercenariesOfMars
             {
                 if (u?.character == null) { errors.Add("유닛 캐릭터가 비어 있습니다."); continue; }
                 errors.AddRange(u.character.ValidateAssignment().Select(e=>$"유닛 {u.id}: {e}"));
+                if(!Enum.IsDefined(typeof(DeploymentConditionMatch),u.conditionMatch))errors.Add($"유닛 {u.id}: 배치 조건 결합을 확인하세요.");
+                if(u.conditions==null)errors.Add($"유닛 {u.id}: 배치 조건 목록을 초기화하세요.");
+                else foreach(var condition in u.conditions)
+                {var issue=condition==null?"배치 조건이 비어 있습니다.":condition.Validate();if(issue!=null)errors.Add($"유닛 {u.id}: {issue}");}
                 if (string.IsNullOrWhiteSpace(u.id) || !ids.Add(u.id)) errors.Add("유닛 ID가 비어 있거나 중복되었습니다.");
                 if (!grid.IsWalkable(u.cell) || !unitCells.Add(u.cell) || occupied.Contains(u.cell)) errors.Add($"유닛 {u.id}: 이동 불가 칸 또는 겹친 배치입니다.");
             }
-            if (!units.Any(u => u?.character != null && u.character.faction == Faction.Ally)) errors.Add("아군을 한 명 이상 배치하세요.");
+            foreach(var slot in deploymentSlots)
+            {
+                if(slot==null) {errors.Add("아군 출격 칸이 비어 있습니다.");continue;}
+                if(string.IsNullOrWhiteSpace(slot.id) || !ids.Add(slot.id)) errors.Add("출격 유닛 ID가 비어 있거나 기존 유닛·출격 칸과 중복되었습니다.");
+                if(!grid.IsWalkable(slot.cell) || occupied.Contains(slot.cell) || !unitCells.Add(slot.cell)) errors.Add($"출격 칸 {slot.id}: 이동 불가 칸 또는 겹친 배치입니다.");
+            }
+            foreach(var ally in testRecruitedAllies)
+                if(ally==null || ally.faction!=Faction.Ally) errors.Add("테스트용 영입 목록에는 아군 편성을 지정하세요.");
+                else errors.AddRange(ally.ValidateAssignment().Select(e=>"테스트 아군: "+e));
+            if (!units.Any(u => u?.character != null && u.character.faction == Faction.Ally) && deploymentSlots.Count==0) errors.Add("아군을 한 명 이상 배치하거나 아군 출격 칸을 추가하세요.");
             if (!units.Any(u => u?.character != null && u.character.faction == Faction.Enemy)) errors.Add("적군을 한 명 이상 배치하세요.");
             foreach (var r in eventRegions)
             {
@@ -121,6 +145,7 @@ namespace MercenariesOfMars
             var grid = CreateGrid(); var reached = new HashSet<Vector2Int>();
             foreach (var ally in units.Where(u => u?.character != null && u.character.faction == Faction.Ally))
                 reached.UnionWith(grid.Reachable(ally.cell, int.MaxValue).Keys);
+            foreach(var slot in deploymentSlots.Where(s=>s!=null)) reached.UnionWith(grid.Reachable(slot.cell,int.MaxValue).Keys);
             if (victoryCondition == MapVictoryCondition.ReachCell && !reached.Contains(goalCell)) warnings.Add("어떤 아군 시작점에서도 목표 칸에 도달할 수 없습니다.");
             foreach (var enemy in units.Where(u => u?.character != null && u.character.faction == Faction.Enemy))
                 if (!reached.Contains(enemy.cell)) warnings.Add($"적군 {enemy.id}의 칸에 아군이 걸어서 도달할 수 없습니다. 원거리 공격 가능 여부를 확인하세요.");

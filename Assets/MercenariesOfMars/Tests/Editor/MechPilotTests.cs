@@ -18,7 +18,7 @@ namespace MercenariesOfMars.Tests
         CharacterDefinition Assignment()
         {
             var c=New<CharacterDefinition>(); c.mech=New<MechDefinition>(); c.pilot=New<PilotDefinition>();
-            c.mech.displayName="시험 기체"; c.mech.maxHp=120; c.mech.maxEnergy=45; c.mech.movement=7;
+            c.mech.displayName="시험 기체"; c.mech.maxHp=1200; c.mech.maxEnergy=45; c.mech.movement=7;
             c.mech.armor=30; c.mech.targeting=40; c.mech.mobility=50; c.mech.price=12000;
             c.mech.movementEnvironments=MovementEnvironment.Ground|MovementEnvironment.Space;
             c.pilot.displayName="시험 파일럿"; c.pilot.level=8; c.pilot.attack=21; c.pilot.defense=11; c.pilot.accuracy=150; c.pilot.evasion=130;
@@ -33,7 +33,7 @@ namespace MercenariesOfMars.Tests
         {
             var c=Assignment(); var u=new BattleUnit("유닛",c,Vector2Int.zero);
             Assert.That(u.Name,Is.EqualTo("시험 기체")); Assert.That(u.PilotName,Is.EqualTo("시험 파일럿")); Assert.That(u.Level,Is.EqualTo(8));
-            Assert.That(u.MaxHp,Is.EqualTo(120)); Assert.That(u.MaxEnergy,Is.EqualTo(45)); Assert.That(u.Movement,Is.EqualTo(7));
+            Assert.That(u.MaxHp,Is.EqualTo(1200)); Assert.That(u.MaxEnergy,Is.EqualTo(45)); Assert.That(u.Movement,Is.EqualTo(7));
             Assert.That(u.Attack,Is.EqualTo(21)); Assert.That(u.Defense,Is.EqualTo(11)); Assert.That(u.Accuracy,Is.EqualTo(150)); Assert.That(u.Evasion,Is.EqualTo(130));
             Assert.That(u.Armor,Is.EqualTo(30)); Assert.That(u.Targeting,Is.EqualTo(40)); Assert.That(u.Mobility,Is.EqualTo(50)); Assert.That(u.Price,Is.EqualTo(12000));
             Assert.That(u.MovementEnvironments,Is.EqualTo(MovementEnvironment.Ground|MovementEnvironment.Space));
@@ -41,10 +41,10 @@ namespace MercenariesOfMars.Tests
         [Test] public void 동일파일럿을_다른기체에_태워도_시작한전투의_스냅샷은_변하지_않는다()
         {
             var c=Assignment(); var first=new BattleUnit("첫 편성",c,Vector2Int.zero);
-            var other=New<MechDefinition>(); other.maxHp=300; c.mech=other; c.pilot.level=20;
+            var other=New<MechDefinition>(); other.maxHp=3000; c.mech=other; c.pilot.level=20;
             var second=new BattleUnit("둘째 편성",c,Vector2Int.right);
-            Assert.That(first.MaxHp,Is.EqualTo(120)); Assert.That(first.Level,Is.EqualTo(8));
-            Assert.That(second.MaxHp,Is.EqualTo(300)); Assert.That(second.Level,Is.EqualTo(20)); Assert.That(first.Attack,Is.EqualTo(second.Attack));
+            Assert.That(first.MaxHp,Is.EqualTo(1200)); Assert.That(first.Level,Is.EqualTo(8));
+            Assert.That(second.MaxHp,Is.EqualTo(3000)); Assert.That(second.Level,Is.EqualTo(20)); Assert.That(first.Attack,Is.EqualTo(second.Attack));
         }
         [Test] public void 경험치는_누적값을_보존하고_레벨을_자동변경하지_않는다()
         {
@@ -108,7 +108,7 @@ namespace MercenariesOfMars.Tests
         [Test] public void 기존에셋_분리는_값과_ID와_참조를_보존하고_재실행해도_중복생성하지_않는다()
         {
             folder="Assets/기체파일럿분리검증_"+Guid.NewGuid().ToString("N"); AssetDatabase.CreateFolder("Assets",folder.Substring(7));
-            var c=New<CharacterDefinition>(); c.displayName="보존 캐릭터"; c.maxHp=87; c.maxEnergy=23; c.movement=6;
+            var c=New<CharacterDefinition>(); c.displayName="보존 캐릭터"; c.maxHp=1087; c.maxEnergy=23; c.movement=6;
             c.level=14; c.attack=35; c.defense=16; c.accuracy=92; c.evasion=17; c.portraits.Add(new CharacterPortrait {label="기본"});
             var skill=New<SkillDefinition>(); AssetDatabase.CreateAsset(skill,folder+"/무장.asset"); c.skills.Add(skill); AssetDatabase.CreateAsset(c,folder+"/편성.asset");
             var before=new BattleUnit("이전",c,Vector2Int.zero); string portraitId=c.portraits[0].id;

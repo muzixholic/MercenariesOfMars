@@ -50,6 +50,8 @@ namespace MercenariesOfMars
     // 결과는 아웃트로의 체력 변경이나 다음 전투의 상태와 독립적으로 보관한다.
     public sealed class StageBattleResult
     {
+        internal StageBattleResult(int turns,int defeated,IEnumerable<string> survivors)
+        {ClearTurns=turns;DefeatedEnemies=defeated;SurvivingAllies=Array.AsReadOnly(survivors.ToArray());}
         public int ClearTurns { get; }
         public int DefeatedEnemies { get; }
         public IReadOnlyList<string> SurvivingAllies { get; }
@@ -64,9 +66,11 @@ namespace MercenariesOfMars
     public sealed class StageDefinition : ScriptableObject
     {
         [InspectorName("스테이지 이름")] public string displayName="새 스테이지";
+        [InspectorName("출격 준비 스크립트（배치 선택 전에 실행）")] public EventSequence deploymentSetup;
         [InspectorName("인트로 스크립트")] public EventSequence intro;
         [InspectorName("맵")] public BattleMapDefinition map;
         [InspectorName("아웃트로 스크립트")] public EventSequence outro;
+        [InspectorName("클리어 후 인터미션 상점")] public StageShopSettings shop=new();
         [InspectorName("조건별 다음 경로（위에서부터 우선）")] public List<StageBranch> branches=new();
         [InspectorName("기본 진행 경로")] public StageDestination defaultDestination=new();
         public StageDestination Resolve(StageBattleResult result,Func<string,bool> flag)
@@ -78,6 +82,8 @@ namespace MercenariesOfMars
         {
             var errors=new List<string>();
             if(string.IsNullOrWhiteSpace(displayName)) errors.Add("스테이지 이름을 입력하세요.");
+            if(shop!=null)errors.AddRange(shop.Validate().Select(e=>"인터미션 상점: "+e));
+            if(deploymentSetup!=null)errors.AddRange(deploymentSetup.ValidateDeploymentSetup().Select(e=>"출격 준비: "+e));
             if(map==null) errors.Add("맵을 지정하세요."); else errors.AddRange(map.ValidateMap());
             if(intro!=null) errors.AddRange(intro.ValidateCommands().Select(e=>"인트로: "+e));
             if(outro!=null)

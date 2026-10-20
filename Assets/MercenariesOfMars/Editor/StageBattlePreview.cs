@@ -34,6 +34,9 @@ namespace MercenariesOfMars.Editor
                 foreach(var root in UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).GetRootGameObjects()) root.SetActive(false);
             var battle=MapBattlePreview.CreateRuntimeBattle(stage.map,"스테이지 테스트 전투");
             var campaign=ScriptableObject.CreateInstance<CampaignDefinition>();campaign.firstStage=stage;
+            campaign.initialAllies.AddRange(stage.map.testRecruitedAllies);
+            if(campaign.initialAllies.Count==0)foreach(var unit in stage.map.units)
+                if(unit?.character!=null && unit.character.faction==Faction.Ally && !campaign.initialAllies.Contains(unit.character))campaign.initialAllies.Add(unit.character);
             battle.campaign=campaign;
             battle.ConfigureStageTest(()=>EditorApplication.isPlaying=false);
             battle.RestartBattle();

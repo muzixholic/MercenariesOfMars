@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0f5138422d60495995d6dcbd5bbc452, type: 3}
+  m_Name: "\uD14C\uC2A4\uD2B8_\uC544\uAD70_1_\uAE30\uCCB4"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.MechDefinition
+  displayName: "\uC0C8 \uCE90\uB9AD\uD130"
+  mapIcon: {fileID: 0}
+  maxHp: 30
+  maxEnergy: 10
+  armor: 0
+  targeting: 0
+  mobility: 0
+  movementEnvironments: 1
+  movement: 4
+  price: 0
+  maxWeaponWeight: 100
+  weapons: []
+  description:

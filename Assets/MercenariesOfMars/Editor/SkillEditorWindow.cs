@@ -9,8 +9,8 @@ namespace MercenariesOfMars.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            MechPilotLists.Fields(serializedObject,new[]{"displayName","icon","power","accuracyModifier","minRange","maxRange","energyCost","maxAmmo"},
-                new[]{"무장 이름","무장 이미지","공격력","명중 보정（%p）","최소 사거리","최대 사거리","소비 에너지","최대 탄수（0: 제한 없음）"});
+            MechPilotLists.Fields(serializedObject,new[]{"displayName","icon","price","power","accuracyModifier","minRange","maxRange","energyCost","maxAmmo"},
+                new[]{"무장 이름","무장 이미지","구매 가격","공격력","명중 보정（%p）","최소 사거리","최대 사거리","소비 에너지","최대 탄수（0: 제한 없음）"});
             using(new EditorGUI.DisabledScope(serializedObject.FindProperty("maxAmmo").intValue==0))
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("currentAmmo"),new GUIContent("현재 탄수（시작 잔탄）"));
             MechPilotLists.Fields(serializedObject,new[]{"weight","canUseAfterMoving","presentation","description"},

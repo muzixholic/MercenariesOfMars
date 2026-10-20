@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 572d92f388aed492b93baa42ba941b70, type: 3}
+  m_Name: "\uC800\uC7A5\uCC38\uC870\uBAA9\uB85D"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.CampaignAssetCatalog
+  entries:
+  - id: 02c7fb6bf117344a6b07194ccba8d6b0
+    asset: {fileID: 11400000, guid: 02c7fb6bf117344a6b07194ccba8d6b0, type: 2}
+  - id: 062a2bdc88ffc4a328a874210c6cb9f4
+    asset: {fileID: 11400000, guid: 062a2bdc88ffc4a328a874210c6cb9f4, type: 2}
+  - id: 084dec6dd4ea141b3b6e63fe8b13d1a0
+    asset: {fileID: 11400000, guid: 084dec6dd4ea141b3b6e63fe8b13d1a0, type: 2}
+  - id: 09a20f55fdeed479087e15e43621dd1c
+    asset: {fileID: 11400000, guid: 09a20f55fdeed479087e15e43621dd1c, type: 2}
+  - id: 0d9ee2a7d55874d1293a2ebb5066a17c
+    asset: {fileID: 11400000, guid: 0d9ee2a7d55874d1293a2ebb5066a17c, type: 2}
+  - id: 23dbb7315f17f49e7872ed4774af45fe
+    asset: {fileID: 11400000, guid: 23dbb7315f17f49e7872ed4774af45fe, type: 2}
+  - id: 28dca63b447ac416a9b90e65b4b9b98e
+    asset: {fileID: 11400000, guid: 28dca63b447ac416a9b90e65b4b9b98e, type: 2}
+  - id: 291f8fb07c9964e15a2557a1509f45e2
+    asset: {fileID: 11400000, guid: 291f8fb07c9964e15a2557a1509f45e2, type: 2}
+  - id: 2af9ecf863d9f468ba77340f2fb4b78c
+    asset: {fileID: 11400000, guid: 2af9ecf863d9f468ba77340f2fb4b78c, type: 2}
+  - id: 2b0ba6500301e4d08a65839bbcfb924d
+    asset: {fileID: 11400000, guid: 2b0ba6500301e4d08a65839bbcfb924d, type: 2}
+  - id: 2ea72c1d956a24fb0a5bffb0e766f110
+    asset: {fileID: 11400000, guid: 2ea72c1d956a24fb0a5bffb0e766f110, type: 2}
+  - id: 2eef0cc90bded4e679727a96938f13ac
+    asset: {fileID: 11400000, guid: 2eef0cc90bded4e679727a96938f13ac, type: 2}
+  - id: 322d2f564e31a4124a4d69f289d4bd5c
+    asset: {fileID: 11400000, guid: 322d2f564e31a4124a4d69f289d4bd5c, type: 2}
+  - id: 37bab4a715a0d4095ad1142da2d8cdda
+    asset: {fileID: 11400000, guid: 37bab4a715a0d4095ad1142da2d8cdda, type: 2}
+  - id: 44e97743dceac4aefb76fabf573051fb
+    asset: {fileID: 11400000, guid: 44e97743dceac4aefb76fabf573051fb, type: 2}
+  - id: 45186ab63524345b7ada59677fde1ce0
+    asset: {fileID: 11400000, guid: 45186ab63524345b7ada59677fde1ce0, type: 2}
+  - id: 517c2ea127a784cf6beba3dd1a57dddd
+    asset: {fileID: 11400000, guid: 517c2ea127a784cf6beba3dd1a57dddd, type: 2}
+  - id: 51eaab1f52ce545f692cbd3a9c831680
+    asset: {fileID: 11400000, guid: 51eaab1f52ce545f692cbd3a9c831680, type: 2}
+  - id: 5928d0c48245749578bdee40232014e3
+    asset: {fileID: 11400000, guid: 5928d0c48245749578bdee40232014e3, type: 2}
+  - id: 60a7be75ec2af4a21b3067bd9c5b3f79
+    asset: {fileID: 11400000, guid: 60a7be75ec2af4a21b3067bd9c5b3f79, type: 2}
+  - id: 655bbc0f4801e4a5f92e67e5cc4dd497
+    asset: {fileID: 11400000, guid: 655bbc0f4801e4a5f92e67e5cc4dd497, type: 2}
+  - id: 65737574d780f4ecca324ab45b5c95c6
+    asset: {fileID: 11400000, guid: 65737574d780f4ecca324ab45b5c95c6, type: 2}
+  - id: 69c941761a6984f148f56b4572969d95
+    asset: {fileID: 11400000, guid: 69c941761a6984f148f56b4572969d95, type: 2}
+  - id: 716cfc6c6cb9a430b84e33f156b91627
+    asset: {fileID: 11400000, guid: 716cfc6c6cb9a430b84e33f156b91627, type: 2}
+  - id: 72f3ab07d072f4c3aa6788913a8eb517
+    asset: {fileID: 11400000, guid: 72f3ab07d072f4c3aa6788913a8eb517, type: 2}
+  - id: 77d5e066cfb4445478f6f629887f12b2
+    asset: {fileID: 11400000, guid: 77d5e066cfb4445478f6f629887f12b2, type: 2}
+  - id: 7a9d4ece731c54a1aa0036f1fe15dd00
+    asset: {fileID: 11400000, guid: 7a9d4ece731c54a1aa0036f1fe15dd00, type: 2}
+  - id: 7f3c6187bb14b4ea3978367abeaba4e6
+    asset: {fileID: 11400000, guid: 7f3c6187bb14b4ea3978367abeaba4e6, type: 2}
+  - id: 807226c9fa94e4c89b7f0b5d311e6f02
+    asset: {fileID: 11400000, guid: 807226c9fa94e4c89b7f0b5d311e6f02, type: 2}
+  - id: 86872217fe4244d89bf3cb9fd4902256
+    asset: {fileID: 11400000, guid: 86872217fe4244d89bf3cb9fd4902256, type: 2}
+  - id: 8c2e60a38cfda4db686dde1de4776b9c
+    asset: {fileID: 11400000, guid: 8c2e60a38cfda4db686dde1de4776b9c, type: 2}
+  - id: 8cd695d4a3e124a8da334d7b16f65aa8
+    asset: {fileID: 11400000, guid: 8cd695d4a3e124a8da334d7b16f65aa8, type: 2}
+  - id: 94606040af4a34b10b6eed02fcca8c3b
+    asset: {fileID: 11400000, guid: 94606040af4a34b10b6eed02fcca8c3b, type: 2}
+  - id: 98161c821a9e44bd8acf7e89c8191453
+    asset: {fileID: 11400000, guid: 98161c821a9e44bd8acf7e89c8191453, type: 2}
+  - id: 98f1a6f6d09a14e22873f5083486cd23
+    asset: {fileID: 11400000, guid: 98f1a6f6d09a14e22873f5083486cd23, type: 2}
+  - id: aafa6a40f2aaf4a78a2ae134acaa9c7a
+    asset: {fileID: 11400000, guid: aafa6a40f2aaf4a78a2ae134acaa9c7a, type: 2}
+  - id: b10537e07fd4646a18c9ccefa2c4c0a8
+    asset: {fileID: 11400000, guid: b10537e07fd4646a18c9ccefa2c4c0a8, type: 2}
+  - id: b20da2e47d9b6468fb3d72507c6836c6
+    asset: {fileID: 11400000, guid: b20da2e47d9b6468fb3d72507c6836c6, type: 2}
+  - id: b69f6c166335d46dbbcef696d45a812e
+    asset: {fileID: 11400000, guid: b69f6c166335d46dbbcef696d45a812e, type: 2}
+  - id: be661b97a2ffc447d94d2a410d334298
+    asset: {fileID: 11400000, guid: be661b97a2ffc447d94d2a410d334298, type: 2}
+  - id: bf16db3c6b68949bda3852daa8114e2d
+    asset: {fileID: 11400000, guid: bf16db3c6b68949bda3852daa8114e2d, type: 2}
+  - id: c225887be06534925af1a5a60899b92e
+    asset: {fileID: 11400000, guid: c225887be06534925af1a5a60899b92e, type: 2}
+  - id: c7c07f88947854dde8f50de70ef1ca37
+    asset: {fileID: 11400000, guid: c7c07f88947854dde8f50de70ef1ca37, type: 2}
+  - id: c8c3eba5a48a143c3a88f59a59b6ea43
+    asset: {fileID: 11400000, guid: c8c3eba5a48a143c3a88f59a59b6ea43, type: 2}
+  - id: ca3715723e34a45e59c30dd2360aede1
+    asset: {fileID: 11400000, guid: ca3715723e34a45e59c30dd2360aede1, type: 2}
+  - id: cdaf933f85d5e415285797491f1ac7c6
+    asset: {fileID: 11400000, guid: cdaf933f85d5e415285797491f1ac7c6, type: 2}
+  - id: d038d19a81ecc425598911fa767581d4
+    asset: {fileID: 11400000, guid: d038d19a81ecc425598911fa767581d4, type: 2}
+  - id: d1f6d17801d15496492fb3a70b3f05a5
+    asset: {fileID: 11400000, guid: d1f6d17801d15496492fb3a70b3f05a5, type: 2}
+  - id: d37c673ad69a54eaa9ed1a4c412c45a0
+    asset: {fileID: 11400000, guid: d37c673ad69a54eaa9ed1a4c412c45a0, type: 2}
+  - id: db0b3f65f699b46548d0cb7afe19c1fb
+    asset: {fileID: 11400000, guid: db0b3f65f699b46548d0cb7afe19c1fb, type: 2}
+  - id: e0203f667231843a89fda33a4624d58b
+    asset: {fileID: 11400000, guid: e0203f667231843a89fda33a4624d58b, type: 2}
+  - id: e764de86b027f4f2ca7962334611ad23
+    asset: {fileID: 11400000, guid: e764de86b027f4f2ca7962334611ad23, type: 2}
+  - id: e86f5baa887e0444084d7658a3fd3c26
+    asset: {fileID: 11400000, guid: e86f5baa887e0444084d7658a3fd3c26, type: 2}
+  - id: eddc01c2d86d1433abb266002a095d96
+    asset: {fileID: 11400000, guid: eddc01c2d86d1433abb266002a095d96, type: 2}
+  - id: f3420bbf3fbc748cda53310a53cdd4a0
+    asset: {fileID: 11400000, guid: f3420bbf3fbc748cda53310a53cdd4a0, type: 2}
+  - id: f3f52c8df7824439bb4fbe90d06c544e
+    asset: {fileID: 11400000, guid: f3f52c8df7824439bb4fbe90d06c544e, type: 2}
+  - id: fad95bcb1f817421b85cf557ddfe9ca8
+    asset: {fileID: 11400000, guid: fad95bcb1f817421b85cf557ddfe9ca8, type: 2}
+  - id: fb21dcd4ac7524ba0ae3f528edcd3395
+    asset: {fileID: 11400000, guid: fb21dcd4ac7524ba0ae3f528edcd3395, type: 2}
+  - id: ffd2b7c9bf2bc4de4a539baba53f642e
+    asset: {fileID: 11400000, guid: ffd2b7c9bf2bc4de4a539baba53f642e, type: 2}
+  - id: ffd452dc3558845d0ba818e6eaaf8a4c
+    asset: {fileID: 11400000, guid: ffd452dc3558845d0ba818e6eaaf8a4c, type: 2}

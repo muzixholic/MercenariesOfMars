@@ -28,8 +28,11 @@ namespace MercenariesOfMars.Editor
                 item.FindPropertyRelative("speakerCharacter").objectReferenceValue = null;
                 item.FindPropertyRelative("speakerPilot").objectReferenceValue = null;
                 item.FindPropertyRelative("skill").objectReferenceValue = null;
+                item.FindPropertyRelative("rosterAlly").objectReferenceValue=null;
+                item.FindPropertyRelative("deploymentBlocked").boolValue=true;
                 item.FindPropertyRelative("seconds").floatValue = 1;
                 item.FindPropertyRelative("amount").intValue = 0;
+                item.FindPropertyRelative("upgradeStageIncrease").intValue=1;
                 item.FindPropertyRelative("cell").vector2IntValue = Vector2Int.zero;
                 item.FindPropertyRelative("flagValue").boolValue = true;
                 item.FindPropertyRelative("jumpTo").intValue = 0;

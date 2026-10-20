@@ -14,7 +14,7 @@ namespace MercenariesOfMars
     }
     public static class BattleUnitFactory
     {
-        public static List<BattleUnit> Create(IReadOnlyList<UnitPlacement> placements,PilotProgressionSettings settings=null)
+        public static List<BattleUnit> Create(IReadOnlyList<UnitPlacement> placements,PilotProgressionSettings settings=null,int maxUpgradeStage=10)
         {
             settings=settings!=null?settings:PilotProgressionSettings.LoadDefault();
             double sum=0; int count=0;
@@ -32,7 +32,7 @@ namespace MercenariesOfMars
                 {
                     if(preset!=null) level=preset.Calculate(sum/count);
                 }
-                units.Add(new BattleUnit(p.id,p.character,p.cell,level,preset));
+                units.Add(new BattleUnit(p.id,p.character,p.cell,level,preset,maxUpgradeStage));
             }
             return units;
         }

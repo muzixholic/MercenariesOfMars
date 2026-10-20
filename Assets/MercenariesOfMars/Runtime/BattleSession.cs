@@ -26,6 +26,7 @@ namespace MercenariesOfMars
 
     public sealed class BattleUnit
     {
+        public CharacterDefinition Definition {get;}
         public string Id { get; }
         public string Name { get; }
         public int Level { get; }
@@ -60,13 +61,14 @@ namespace MercenariesOfMars
         public bool HasActed { get; internal set; }
         public bool IsAlive => Hp > 0;
 
-        public BattleUnit(string id, CharacterDefinition definition, Vector2Int cell,int? pilotLevel=null,EnemyLevelPreset enemyPreset=null)
+        public BattleUnit(string id, CharacterDefinition definition, Vector2Int cell,int? pilotLevel=null,EnemyLevelPreset enemyPreset=null,int maxUpgradeStage=10)
         {
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("유닛 ID가 필요합니다.");
             if (definition == null) throw new ArgumentNullException(nameof(definition));
             var assignmentErrors=definition.ValidateAssignment();
             if(assignmentErrors.Count>0) throw new ArgumentException(string.Join("\n",assignmentErrors));
             var mech=definition.mech; var pilot=definition.pilot;
+            Definition=definition;
             Id = id; Name = definition.UnitName; PilotName=definition.PilotName; Faction = definition.faction; Cell = cell;
             Level = Mathf.Clamp(pilotLevel??(pilot!=null?pilot.level:definition.level),1,99); MapIcon = mech!=null?mech.mapIcon:definition.mapIcon;
             Portrait=definition.DialoguePortraits?.FirstOrDefault(p=>p!=null && p.sprite!=null)?.sprite;
@@ -74,16 +76,16 @@ namespace MercenariesOfMars
             defeatExperienceMultiplier=Faction==Faction.Enemy && enemyPreset!=null?enemyPreset.experienceMultiplier:1;
             defeatExperienceOffset=Faction==Faction.Enemy && enemyPreset!=null?enemyPreset.experienceOffset:0;
             Experience=pilot!=null?Mathf.Max(0,pilot.experience):0;
-            MaxHp = Mathf.Max(1,mech!=null?mech.maxHp:definition.maxHp); Hp = MaxHp;
+            MaxHp = Mathf.Max(1,mech!=null?mech.MaxHpAtLimit(maxUpgradeStage):definition.maxHp); Hp = MaxHp;
             Attack = pilot!=null?stats.Attack:Mathf.Max(0,definition.attack); Accuracy = pilot!=null?stats.Accuracy:Mathf.Clamp(definition.accuracy,0,100);
             Evasion = pilot!=null?stats.Evasion:Mathf.Clamp(definition.evasion,0,100); Defense = pilot!=null?stats.Defense:Mathf.Max(0,definition.defense); Movement = Mathf.Max(0,definition.UnitMovement);
             WeaponWeight=mech!=null?mech.TotalWeaponWeight:0; MaxWeaponWeight=mech!=null?Mathf.Max(0,mech.maxWeaponWeight):0;
-            Armor=mech!=null?Mathf.Max(0,mech.armor):0; Targeting=mech!=null?Mathf.Max(0,mech.targeting):0;
-            Mobility=mech!=null?Mathf.Max(0,mech.mobility):0; Price=mech!=null?Mathf.Max(0,mech.price):0;
+            Armor=mech!=null?mech.ArmorAtLimit(maxUpgradeStage):0; Targeting=mech!=null?mech.TargetingAtLimit(maxUpgradeStage):0;
+            Mobility=mech!=null?mech.MobilityAtLimit(maxUpgradeStage):0; Price=mech!=null?Mathf.Clamp(mech.price,0,9999000):0;
             MovementEnvironments=mech!=null?mech.movementEnvironments:MovementEnvironment.Ground;
-            MaxEnergy = Mathf.Max(0,definition.UnitMaxEnergy); Energy = MaxEnergy;
+            MaxEnergy = Mathf.Max(0,mech!=null?mech.MaxEnergyAtLimit(maxUpgradeStage):definition.maxEnergy); Energy = MaxEnergy;
             Skills = (definition.Weapons ?? new List<SkillDefinition>()).Where(s => s != null).Distinct()
-                .Select(s => new BattleSkill(s)).ToList().AsReadOnly();
+                .Select(s => new BattleSkill(s,mech!=null?Mathf.Clamp(mech.weaponUpgrade,0,Mathf.Max(0,maxUpgradeStage)):0)).ToList().AsReadOnly();
         }
     }
 
@@ -134,6 +136,13 @@ namespace MercenariesOfMars
         }
 
         public BattleUnit Find(string id) => units.Find(u => u.Id == id);
+        public bool Withdraw(string id)
+        {
+            if(IsPresenting || PendingAttack!=null)return false;
+            var unit=Find(id);if(unit==null)return false;
+            units.Remove(unit);unit.Hp=0;
+            if(Outcome==BattleOutcome.Ongoing)AfterAction();else Changed?.Invoke();return true;
+        }
         public BattleUnit At(Vector2Int cell) => units.Find(u => u.IsAlive && u.Cell == cell);
         bool CanAct(BattleUnit unit) => !IsPresenting && PendingAttack == null && Outcome == BattleOutcome.Ongoing && unit != null && units.Contains(unit)
             && unit.IsAlive && unit.Faction == ActiveFaction && !unit.HasActed;

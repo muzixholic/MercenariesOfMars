@@ -22,16 +22,35 @@ namespace MercenariesOfMars
         public void RestoreFlags(IReadOnlyDictionary<string,bool> values)
         { flags.Clear(); if(values!=null) foreach(var pair in values) flags[pair.Key]=pair.Value; }
         public void ContinueDialogue() => awaitingDialogue = false;
-        public bool Play(EventSequence sequence, BattleSession battle)
+        public bool Play(EventSequence sequence, BattleSession battle,CampaignFlow campaign=null)
         {
             if (IsRunning || !isActiveAndEnabled) return false;
             LastError = null;
             if (sequence == null || battle == null) { LastError = "이벤트와 전투가 필요합니다."; return false; }
             var errors = sequence.ValidateCommands();
             if (errors.Count > 0) { LastError = string.Join("\n", errors); return false; }
-            IsRunning = true; StartCoroutine(Execute(sequence, battle)); return true;
+            campaign??=GetComponent<BattleController>()?.Campaign;
+            if(sequence.commands.Any(c=>c.kind==EventCommandKind.IncreaseMaxUpgradeStage || c.kind==EventCommandKind.RecruitAlly || c.kind==EventCommandKind.RemoveAlly || c.kind==EventCommandKind.SetDeploymentBlocked)
+                && (campaign==null || campaign.Phase==CampaignPhase.Inactive || campaign.Phase==CampaignPhase.Error))
+            {LastError="캠페인 명령（개조 해금·아군 영입·이탈）은 진행 중인 캠페인이 필요합니다. 캠페인 또는 스테이지 테스트로 실행하세요.";return false;}
+            IsRunning = true; StartCoroutine(Execute(sequence, battle,campaign)); return true;
         }
-        IEnumerator Execute(EventSequence sequence, BattleSession battle)
+        bool RunCampaignCommand(EventCommand c,CampaignFlow campaign)=>DeploymentSetupInterpreter.CampaignCommand(c,campaign);
+        public bool RunDeploymentSetup(EventSequence sequence,CampaignFlow campaign)
+        {
+            if(IsRunning || !isActiveAndEnabled)return false;
+            LastError=null;if(sequence==null)return true;
+            if(campaign==null || campaign.Phase==CampaignPhase.Inactive || campaign.Phase==CampaignPhase.Error){LastError="출격 준비에는 진행 중인 캠페인이 필요합니다.";return false;}
+            var errors=sequence.ValidateDeploymentSetup();
+            if(errors.Count>0){LastError=string.Join("\n",errors);return false;}
+            IsRunning=true;
+            try
+            {
+                bool success=DeploymentSetupInterpreter.Run(sequence,campaign,flags,instructionLimit,out var error);LastError=error;return success;
+            }
+            finally{IsRunning=false;}
+        }
+        IEnumerator Execute(EventSequence sequence, BattleSession battle,CampaignFlow campaign)
         {
             int steps = 0;
             try
@@ -52,6 +71,11 @@ namespace MercenariesOfMars
                         case EventCommandKind.Wait: yield return new WaitForSecondsRealtime(c.seconds); break;
                         case EventCommandKind.ChangeHp: succeeded = battle.ChangeHp(c.unitId, c.amount); break;
                         case EventCommandKind.SetFlag: flags[c.flag] = c.flagValue; break;
+                        case EventCommandKind.IncreaseMaxUpgradeStage:
+                        case EventCommandKind.RecruitAlly:
+                        case EventCommandKind.RemoveAlly:
+                        case EventCommandKind.SetDeploymentBlocked:
+                            succeeded=RunCampaignCommand(c,campaign);break;
                         case EventCommandKind.BranchFlag:
                             if (GetFlag(c.flag) == c.flagValue) i = c.jumpTo - 1;
                             break;

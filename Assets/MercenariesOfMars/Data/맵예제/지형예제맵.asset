@@ -54,9 +54,7 @@ MonoBehaviour:
     terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
   - cell: {x: 2, y: 7}
     terrain: {fileID: 11400000, guid: bbb4880f4c3b24161a4197492560d076, type: 2}
-  structures:
-  - cell: {x: 4, y: 3}
-    structure: {fileID: 11400000, guid: 68ebcf6354d89410aae46c989b4b4ebf, type: 2}
+  structures: []
   units:
   - id: "\uC544\uAD70_\uAE30\uC0AC"
     character: {fileID: 11400000, guid: 8c2e60a38cfda4db686dde1de4776b9c, type: 2}
@@ -78,6 +76,14 @@ MonoBehaviour:
     cell: {x: 8, y: 5}
     autoEnemyLevel: 1
     enemyLevelPreset: {fileID: 0}
+  deploymentSlots:
+  - id: "\uCD9C\uACA93"
+    cell: {x: 1, y: 4}
+  - id: "\uCD9C\uACA94"
+    cell: {x: 1, y: 3}
+  testRecruitedAllies:
+  - {fileID: 11400000, guid: 084dec6dd4ea141b3b6e63fe8b13d1a0, type: 2}
+  - {fileID: 11400000, guid: 98161c821a9e44bd8acf7e89c8191453, type: 2}
   openingEvent: {fileID: 0}
   eventRegions:
   - label: "\uC232 \uC548\uB0B4"

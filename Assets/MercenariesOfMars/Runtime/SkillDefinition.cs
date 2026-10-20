@@ -6,6 +6,7 @@ namespace MercenariesOfMars
     [CreateAssetMenu(menuName = "화성의 용병단/공격 스킬", fileName = "새 스킬")]
     public sealed class SkillDefinition : ScriptableObject
     {
+        [Min(0),InspectorName("구매 가격")] public int price;
         [InspectorName("스킬 이름")] public string displayName = "새 스킬";
         [InspectorName("무장 이미지（선택 사항）")] public Sprite icon;
         [Min(0), InspectorName("공격력")] public int power = 10;
@@ -47,6 +48,8 @@ namespace MercenariesOfMars
         public string Name { get; }
         public Sprite Icon { get; }
         public int Power { get; }
+        public int BasePower { get; }
+        public int UpgradeStage { get; }
         public int AccuracyModifier { get; }
         public int MinRange { get; }
         public int MaxRange { get; }
@@ -58,7 +61,7 @@ namespace MercenariesOfMars
         public string AmmoText=>MaxAmmo==0?"탄수 제한 없음":$"잔탄 {CurrentAmmo}/{MaxAmmo}";
         internal void ConsumeAmmo() { if(MaxAmmo>0 && CurrentAmmo>0) CurrentAmmo--; }
         public bool CanUseAfterMoving { get; }
-        public BattleSkill(SkillDefinition definition)
+        public BattleSkill(SkillDefinition definition,int weaponUpgrade=0)
         {
             if (definition == null) throw new System.ArgumentNullException(nameof(definition));
             MaxAmmo=Mathf.Max(0,definition.maxAmmo); CurrentAmmo=MaxAmmo>0?Mathf.Clamp(definition.currentAmmo,0,MaxAmmo):0;
@@ -66,7 +69,8 @@ namespace MercenariesOfMars
             Definition = definition; Name = definition.displayName; Icon=definition.icon;
             CanUseAfterMoving = definition.canUseAfterMoving;
             AccuracyModifier = Mathf.Clamp(definition.accuracyModifier, -100, 100);
-            Power = Mathf.Max(0, definition.power); MinRange = Mathf.Max(1, definition.minRange);
+            BasePower=Mathf.Max(0,definition.power); UpgradeStage=Mathf.Max(0,weaponUpgrade);
+            Power = MechDefinition.ApplyUpgrade(BasePower,UpgradeStage); MinRange = Mathf.Max(1, definition.minRange);
             MaxRange = Mathf.Max(MinRange, definition.maxRange); EnergyCost = Mathf.Max(0, definition.energyCost);
         }
         public bool IsInRange(Vector2Int from, Vector2Int to)

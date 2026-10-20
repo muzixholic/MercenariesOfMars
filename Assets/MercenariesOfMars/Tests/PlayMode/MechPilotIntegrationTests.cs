@@ -18,7 +18,7 @@ namespace MercenariesOfMars.PlayMode.Tests
             for(int i=0;i<2;i++)
             {
                 var assignment=New<CharacterDefinition>(); assignment.faction=i==0?Faction.Ally:Faction.Enemy;
-                assignment.mech=New<MechDefinition>(); assignment.mech.displayName="기체"+i; assignment.mech.maxHp=100; assignment.mech.maxEnergy=40; assignment.mech.armor=999;
+                assignment.mech=New<MechDefinition>(); assignment.mech.displayName="기체"+i; assignment.mech.maxHp=1000; assignment.mech.maxEnergy=40; assignment.mech.armor=999;
                 assignment.pilot=New<PilotDefinition>(); assignment.pilot.displayName="파일럿"+i; assignment.pilot.level=9; assignment.pilot.attack=15; assignment.pilot.defense=7; assignment.pilot.accuracy=999;
                 var weapon=New<SkillDefinition>(); weapon.power=20; weapon.energyCost=5; assignment.mech.weapons.Add(weapon);
                 c.placements.Add(new UnitPlacement { id="유닛"+i,character=assignment,cell=new Vector2Int(i,0) });
@@ -30,12 +30,29 @@ namespace MercenariesOfMars.PlayMode.Tests
         {
             var c=Create(); yield return null; Assert.That(c.RestartBattle(),Is.True);
             var ally=c.Session.Find("유닛0"); var enemy=c.Session.Find("유닛1");
-            Assert.That(ally.Name,Is.EqualTo("기체0")); Assert.That(ally.PilotName,Is.EqualTo("파일럿0")); Assert.That(ally.Hp,Is.EqualTo(100)); Assert.That(ally.Energy,Is.EqualTo(40));
+            Assert.That(ally.Name,Is.EqualTo("기체0")); Assert.That(ally.PilotName,Is.EqualTo("파일럿0")); Assert.That(ally.Hp,Is.EqualTo(1000)); Assert.That(ally.Energy,Is.EqualTo(40));
             Assert.That(c.Session.GetDamage(ally,enemy,ally.Skills[0]),Is.EqualTo(28),"장갑치 999를 새 계산식으로 합산하면 안 됩니다.");
-            Assert.That(c.Session.TryAttack(ally,enemy),Is.True); Assert.That(enemy.Hp,Is.EqualTo(72)); Assert.That(ally.Energy,Is.EqualTo(35));
-            c.Session.ChangeHp("유닛1",-999); var otherPilot=New<PilotDefinition>(); otherPilot.displayName="교체 파일럿"; otherPilot.level=20;
+            Assert.That(c.Session.TryAttack(ally,enemy),Is.True); Assert.That(enemy.Hp,Is.EqualTo(972)); Assert.That(ally.Energy,Is.EqualTo(35));
+            c.Session.ChangeHp("유닛1",-9999); var otherPilot=New<PilotDefinition>(); otherPilot.displayName="교체 파일럿"; otherPilot.level=20;
             c.placements[0].character.pilot=otherPilot; c.RestartBattle();
-            Assert.That(c.Session.Find("유닛0").PilotName,Is.EqualTo("교체 파일럿")); Assert.That(c.Session.Find("유닛0").Level,Is.EqualTo(20)); Assert.That(c.Session.Find("유닛0").Hp,Is.EqualTo(100));
+            Assert.That(c.Session.Find("유닛0").PilotName,Is.EqualTo("교체 파일럿")); Assert.That(c.Session.Find("유닛0").Level,Is.EqualTo(20)); Assert.That(c.Session.Find("유닛0").Hp,Is.EqualTo(1000));
+        }
+        [UnityTest] public IEnumerator 개조값은_전투와_무장선택창에_반영하고_재시작때_갱신한다()
+        {
+            var c=Create();c.showControls=true;var mech=c.placements[0].character.mech;
+            mech.hpUpgrade=5;mech.energyUpgrade=10;mech.armorUpgrade=2;mech.weaponUpgrade=5;
+            yield return null;Assert.That(c.RestartBattle(),Is.True);
+            var ally=c.Session.Find("유닛0");
+            Assert.That(ally.MaxHp,Is.EqualTo(1250));Assert.That(ally.Hp,Is.EqualTo(1250));Assert.That(ally.MaxEnergy,Is.EqualTo(60));Assert.That(ally.Armor,Is.EqualTo(1098));
+            Assert.That(c.SelectUnit("유닛0"),Is.True);Assert.That(c.OpenSkillSelection(),Is.True);c.WeaponMenu.Refresh();
+            Assert.That(c.WeaponMenu.IsRendered,Is.True);Assert.That(c.WeaponMenu.FocusedWeapon.Power,Is.EqualTo(25));
+            Assert.That(c.WeaponMenu.ConfirmFocused(),Is.True);
+            Assert.That(c.Session.GetDamage(ally,c.Session.Find("유닛1"),ally.Skills[0]),Is.EqualTo(33));
+            mech.hpUpgrade=10;mech.weaponUpgrade=10;
+            Assert.That(ally.MaxHp,Is.EqualTo(1250));Assert.That(ally.Skills[0].Power,Is.EqualTo(25));
+            c.Session.ChangeHp("유닛1",-9999);Assert.That(c.RestartBattle(),Is.True);
+            Assert.That(c.Session.Find("유닛0").MaxHp,Is.EqualTo(1500));Assert.That(c.Session.Find("유닛0").Skills[0].Power,Is.EqualTo(30));
+            Assert.That(mech.maxHp,Is.EqualTo(1000));Assert.That(mech.weapons[0].power,Is.EqualTo(20));
         }
         [UnityTest] public IEnumerator 파일럿_단독화자를_재생하고_수동화자로_전환한다()
         {
@@ -57,11 +74,11 @@ namespace MercenariesOfMars.PlayMode.Tests
             yield return null; Assert.That(c.RestartBattle(),Is.True);
             var enemy=c.Session.Find("유닛1"); Assert.That(enemy.Level,Is.EqualTo(24)); Assert.That(enemy.Attack,Is.EqualTo(61));
             Assert.That(enemy.CalculateDefeatExperience(100),Is.EqualTo(152));
-            Assert.That(enemy.Hp,Is.EqualTo(100)); Assert.That(enemy.MaxEnergy,Is.EqualTo(40)); Assert.That(c.placements[1].character.pilot.level,Is.EqualTo(7));
+            Assert.That(enemy.Hp,Is.EqualTo(1000)); Assert.That(enemy.MaxEnergy,Is.EqualTo(40)); Assert.That(c.placements[1].character.pilot.level,Is.EqualTo(7));
             settings.defaultEnemyLevel.experienceMultiplier=2;
             Assert.That(enemy.CalculateDefeatExperience(100),Is.EqualTo(152));
             c.placements[0].character.pilot.level=90; c.Session.EndTurn(); Assert.That(enemy.Level,Is.EqualTo(24));
-            c.Session.ChangeHp("유닛1",-999); Assert.That(c.RestartBattle(),Is.True);
+            c.Session.ChangeHp("유닛1",-9999); Assert.That(c.RestartBattle(),Is.True);
             Assert.That(c.Session.Find("유닛1").CalculateDefeatExperience(100),Is.EqualTo(202));
             Assert.That(c.Session.Find("유닛1").Level,Is.EqualTo(99)); Assert.That(enemy.Level,Is.EqualTo(24));
         }
@@ -69,7 +86,7 @@ namespace MercenariesOfMars.PlayMode.Tests
         {
             var c=Create(); c.placements[0].character.pilot.level=20; c.placements[1].character.pilot.level=7; c.placements[1].autoEnemyLevel=false;
             yield return null; c.RestartBattle(); Assert.That(c.Session.Find("유닛1").Level,Is.EqualTo(7));
-            c.Session.ChangeHp("유닛1",-999); c.placements[1].autoEnemyLevel=true;
+            c.Session.ChangeHp("유닛1",-9999); c.placements[1].autoEnemyLevel=true;
             c.placements[1].enemyLevelPreset=New<EnemyLevelPreset>(); c.placements[1].enemyLevelPreset.offset=5;
             c.RestartBattle(); Assert.That(c.Session.Find("유닛1").Level,Is.EqualTo(25));
         }
@@ -83,9 +100,9 @@ namespace MercenariesOfMars.PlayMode.Tests
             Assert.That(c.Session.TryAttack(ally,enemy,ally.Skills[0]),Is.True);
             Assert.That(ally.Skills[0].CurrentAmmo,Is.Zero); Assert.That(ally.WeaponWeight,Is.EqualTo(10)); Assert.That(ally.MaxWeaponWeight,Is.EqualTo(10));
             typeof(BattleController).GetMethod("EnemyStep",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).Invoke(c,null);
-            Assert.That(c.Session.ActiveFaction,Is.EqualTo(Faction.Ally)); Assert.That(ally.Hp,Is.EqualTo(100));
+            Assert.That(c.Session.ActiveFaction,Is.EqualTo(Faction.Ally)); Assert.That(ally.Hp,Is.EqualTo(1000));
             Assert.That(c.Session.CanSelectSkill(ally,ally.Skills[0]),Is.False);
-            c.Session.ChangeHp("유닛1",-999); Assert.That(c.RestartBattle(),Is.True);
+            c.Session.ChangeHp("유닛1",-9999); Assert.That(c.RestartBattle(),Is.True);
             Assert.That(c.Session.Find("유닛0").Skills[0].CurrentAmmo,Is.EqualTo(1)); Assert.That(definition.currentAmmo,Is.EqualTo(1));
         }
     }

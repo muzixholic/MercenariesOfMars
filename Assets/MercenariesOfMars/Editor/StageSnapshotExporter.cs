@@ -31,8 +31,7 @@ namespace MercenariesOfMars.Editor
                 {
                     map.displayName="현재 전투 맵";map.width=source.board.width;map.height=source.board.height;map.cellSize=source.board.cellSize;
                     map.openingEvent=source.openingEvent;
-                    map.units=source.placements.Select(p=>p==null?null:new UnitPlacement {
-                        id=p.id,character=p.character,cell=p.cell,autoEnemyLevel=p.autoEnemyLevel,enemyLevelPreset=p.enemyLevelPreset }).ToList();
+                    map.units=source.placements.Select(p=>p?.Copy()).ToList();
                     if(source.board.blockedCells.Count>0)
                     {
                         blocked=ScriptableObject.CreateInstance<TerrainDefinition>();blocked.displayName="현재 전투 진입 불가";

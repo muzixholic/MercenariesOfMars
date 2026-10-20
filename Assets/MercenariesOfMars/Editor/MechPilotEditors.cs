@@ -42,7 +42,8 @@ namespace MercenariesOfMars.Editor
                 }
                 var skill=item.objectReferenceValue as SkillDefinition;
                 using(new EditorGUI.DisabledScope(skill==null)) if(GUI.Button(new Rect(r.xMax-44,r.y,44,20),"편집")) SkillEditorWindow.Edit(skill);
-                r.y+=23; EditorGUI.LabelField(r,skill!=null?$"공격 {skill.power} · 거리 {skill.minRange}~{skill.maxRange} · EN {skill.energyCost} · 무게 {skill.weight}":"무장 스킬을 지정하세요.");
+                int stage=so.FindProperty("weaponUpgrade")?.intValue??0;
+                r.y+=23; EditorGUI.LabelField(r,skill!=null?$"공격 {skill.power} → {MechDefinition.ApplyUpgrade(skill.power,stage)} · 거리 {skill.minRange}~{skill.maxRange} · EN {skill.energyCost} · 무게 {skill.weight}":"무장 스킬을 지정하세요.");
             };
             list.onAddCallback=_=> { int i=list.serializedProperty.arraySize++; list.serializedProperty.GetArrayElementAtIndex(i).objectReferenceValue=null; list.index=i; };
             list.onRemoveCallback=_=>
@@ -64,7 +65,8 @@ namespace MercenariesOfMars.Editor
                 var skill=i==index?candidate:weapons.GetArrayElementAtIndex(i).objectReferenceValue as SkillDefinition;
                 if(skill!=null) total+=Mathf.Max(0,skill.weight);
             }
-            return total<=so.FindProperty("maxWeaponWeight").intValue;
+            int capacity=so.FindProperty("maxWeaponWeight").intValue;
+            return capacity>=0 && capacity<=990 && total<=capacity;
         }
         public static void Fields(SerializedObject so,string[] fields,string[] labels)
         { for(int i=0;i<fields.Length;i++) EditorGUILayout.PropertyField(so.FindProperty(fields[i]),new GUIContent(labels[i]),true); }
@@ -75,19 +77,47 @@ namespace MercenariesOfMars.Editor
         ReorderableList weapons;
         string equipmentError;
         void OnEnable()=>weapons=MechPilotLists.Weapons(serializedObject,message=>equipmentError=message);
+        void BaseStat(string field,string label,int min,int max)
+        {
+            var property=serializedObject.FindProperty(field);
+            EditorGUI.BeginChangeCheck();
+            int value=EditorGUILayout.IntField($"{label}（{min:N0}~{max:N0}）",property.intValue);
+            if(EditorGUI.EndChangeCheck())property.intValue=Mathf.Clamp(value,min,max);
+        }
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            MechPilotLists.Fields(serializedObject,new[]{"displayName","mapIcon","maxHp","maxEnergy","armor","targeting","mobility","movement","price","maxWeaponWeight","description"},
-                new[]{"기체 이름","맵 아이콘","HP","EN","장갑치","조준치","운동성","이동력","가격","허용중량","설명"});
+            MechPilotLists.Fields(serializedObject,new[]{"displayName","mapIcon"},new[]{"기체 이름","맵 아이콘"});
+            EditorGUILayout.LabelField("기본 능력치",EditorStyles.boldLabel);
+            BaseStat("maxHp","HP",1000,9999000);BaseStat("maxEnergy","EN",10,990);
+            BaseStat("armor","장갑치",10,9990);BaseStat("targeting","조준치",10,9990);BaseStat("mobility","운동성",10,9990);
+            BaseStat("movement","이동력",1,99);BaseStat("price","가격",0,9999000);BaseStat("maxWeaponWeight","허용중량",0,990);
+            EditorGUILayout.Space();EditorGUILayout.LabelField("개조 단계（기본값 대비 단계당 +5%）",EditorStyles.boldLabel);
+            MechPilotLists.Fields(serializedObject,new[]{"hpUpgrade","energyUpgrade","armorUpgrade","targetingUpgrade","mobilityUpgrade","weaponUpgrade"},
+                new[]{"HP 개조","EN 개조","장갑치 개조","조준치 개조","운동성 개조","무장 개조"});
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("description"),new GUIContent("설명"));
             var environments=serializedObject.FindProperty("movementEnvironments");
             environments.intValue=(int)(MovementEnvironment)EditorGUILayout.EnumFlagsField("이동 가능 지형",(MovementEnvironment)environments.intValue);
             weapons.DoLayoutList(); serializedObject.ApplyModifiedProperties();
             var mech=(MechDefinition)target;
+            EditorGUILayout.LabelField("개조 적용값（캠페인 상한 적용 전）",EditorStyles.boldLabel);
+            EditorGUILayout.LabelField($"HP {mech.EffectiveMaxHp:N0} · EN {mech.EffectiveMaxEnergy:N0}");
+            EditorGUILayout.LabelField($"장갑치 {mech.EffectiveArmor:N0} · 조준치 {mech.EffectiveTargeting:N0} · 운동성 {mech.EffectiveMobility:N0}");
+            EditorGUILayout.Space();EditorGUILayout.LabelField("다음 1단계 개조 비용",EditorStyles.boldLabel);
+            var upgradeTypes=new[]{MechUpgradeType.Hp,MechUpgradeType.Energy,MechUpgradeType.Armor,MechUpgradeType.Targeting,MechUpgradeType.Mobility,MechUpgradeType.Weapon};
+            var upgradeNames=new[]{"HP","EN","장갑치","조준치","운동성","무장"};
+            for(int i=0;i<upgradeTypes.Length;i++)
+            {
+                int stage=Mathf.Max(0,mech.UpgradeStage(upgradeTypes[i]));
+                if(stage==int.MaxValue)EditorGUILayout.LabelField(upgradeNames[i],"다음 단계 없음");
+                else EditorGUILayout.LabelField($"{upgradeNames[i]} {stage} → {stage+1}",$"{MechUpgradeCost.NextStage(upgradeTypes[i],stage):N0}");
+            }
+            EditorGUILayout.HelpBox("무장 비용은 목표 단계 × 5,000, 나머지 5개 항목은 각각 목표 단계 × 3,000입니다. 이 표는 비용 미리보기이며 에디터에서 단계를 직접 수정하면 자금을 차감하지 않습니다.",MessageType.Info);
+            EditorGUILayout.HelpBox("개조는 기본값 × (100 + 단계 × 5) ÷ 100으로 계산하며 소수점 이하는 버립니다. 기체에는 10단계 초과 값도 설정할 수 있으며 실제 전투는 캠페인의 최대 개조 단계까지만 적용합니다（단독 맵 테스트 기본 10）. 상한을 늘려도 기체의 개조 단계 자체는 증가하지 않습니다. 무장 공격력은 장착 기체의 무장 개조 단계를 사용합니다. 이동력·가격·허용중량·EN 소모·잔탄·무게는 개조하지 않습니다.",MessageType.Info);
             EditorGUILayout.LabelField("무장 총중량 / 허용중량",$"{mech.TotalWeaponWeight} / {mech.maxWeaponWeight}");
             if(!string.IsNullOrEmpty(equipmentError)) EditorGUILayout.HelpBox(equipmentError,MessageType.Warning);
             foreach(var error in mech.ValidateEquipment()) EditorGUILayout.HelpBox(error,MessageType.Error);
-            EditorGUILayout.HelpBox("장갑치·조준치·운동성·이동 유형·가격은 저장 항목입니다. 새 합산 계산식과 비용·이동 유형 판정은 아직 적용하지 않습니다.",MessageType.Info);
+            EditorGUILayout.HelpBox("장갑치·조준치·운동성의 전투 합산 계산식과 이동 유형 판정은 기존 규칙을 유지합니다. 인터미션에서 개조·구매 비용을 적용하며, 수리·매각 비용은 아직 적용하지 않습니다.",MessageType.Info);
             if(GUILayout.Button("무장 스킬 에디터 열기")) SkillEditorWindow.Open();
         }
     }
@@ -100,8 +130,8 @@ namespace MercenariesOfMars.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            MechPilotLists.Fields(serializedObject,new[]{"displayName","level","experience","attackGrowth","defenseGrowth","accuracyGrowth","evasionGrowth","attack","defense","accuracy","evasion","attackAt99","defenseAt99","accuracyAt99","evasionAt99","description"},
-                new[]{"파일럿 이름","레벨（1~99）","누적 경험치","공격력 성장 커브","방어력 성장 커브","명중력 성장 커브","회피력 성장 커브","1레벨 공격력","1레벨 방어력","1레벨 명중력","1레벨 회피력","99레벨 공격력","99레벨 방어력","99레벨 명중력","99레벨 회피력","설명"});
+            MechPilotLists.Fields(serializedObject,new[]{"displayName","price","level","experience","attackGrowth","defenseGrowth","accuracyGrowth","evasionGrowth","attack","defense","accuracy","evasion","attackAt99","defenseAt99","accuracyAt99","evasionAt99","description"},
+                new[]{"파일럿 이름","영입 가격","레벨（1~99）","누적 경험치","공격력 성장 커브","방어력 성장 커브","명중력 성장 커브","회피력 성장 커브","1레벨 공격력","1레벨 방어력","1레벨 명중력","1레벨 회피력","99레벨 공격력","99레벨 방어력","99레벨 명중력","99레벨 회피력","설명"});
             portraits.DoLayoutList(); serializedObject.ApplyModifiedProperties();
             var pilot=(PilotDefinition)target;
             foreach(var error in pilot.ValidateGrowth()) EditorGUILayout.HelpBox(error,MessageType.Error);

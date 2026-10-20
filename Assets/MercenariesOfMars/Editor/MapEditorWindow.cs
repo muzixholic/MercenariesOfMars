@@ -8,7 +8,7 @@ namespace MercenariesOfMars.Editor
 {
     public sealed class MapEditorWindow : EditorWindow
     {
-        static readonly string[] Tools = { "지형 칠하기", "구조물 배치", "유닛 배치", "이벤트 구역", "목표 칸", "이동 미리보기" };
+        static readonly string[] Tools = { "지형 칠하기", "구조물 배치", "유닛 배치", "이벤트 구역", "목표 칸", "이동 미리보기", "아군 출격 칸" };
         static readonly string[] Displays = { "지형", "이동 비용", "명중·방어 보정", "이동 불가" };
         [SerializeField] BattleMapDefinition map;
         TerrainDefinition terrain;
@@ -21,6 +21,7 @@ namespace MercenariesOfMars.Editor
         float zoom = 48;
         int previewMovement = 4;
         string unitId = "유닛";
+        string deploymentId="출격";
         Vector2Int? regionStart;
         Vector2Int? hover;
         readonly HashSet<Vector2Int> painted = new();
@@ -91,7 +92,7 @@ namespace MercenariesOfMars.Editor
                 }
                 using (new EditorGUILayout.VerticalScope())
                 {
-                    tool = GUILayout.Toolbar(tool, Tools);
+                    tool = GUILayout.SelectionGrid(tool, Tools,4);
                     using (new EditorGUILayout.HorizontalScope())
                     {
                         display = EditorGUILayout.Popup("표시", display, Displays);
@@ -146,7 +147,7 @@ namespace MercenariesOfMars.Editor
                     character = (CharacterDefinition)EditorGUILayout.ObjectField("유닛 편성", character, typeof(CharacterDefinition), false);
                     unitId = EditorGUILayout.TextField("유닛 ID 접두어", unitId);
                     if (character != null && GUILayout.Button("유닛 편성 에디터 열기")) CharacterEditorWindow.Edit(character);
-                    EditorGUILayout.HelpBox("빈 칸을 클릭하면 배치합니다. 같은 ID는 숫자를 붙여 구분합니다. 배치 탭에서 적군 자동 레벨과 보정 프리셋을 지정할 수 있습니다. 미지정 시 공통 기본값을 사용합니다.", MessageType.None);
+                    EditorGUILayout.HelpBox("빈 칸을 클릭하면 배치합니다. 같은 ID는 숫자를 붙여 구분합니다. 배치 탭에서 영입 여부·기체·파일럿 보유·플래그 조건（AND/OR）과 적군 레벨 보정을 지정할 수 있습니다. 캠페인의 고정 아군은 영입된 기체·파일럿으로 출격하며 서로 다른 편성이면 알림 후 영구 교환합니다. 미지정 시 공통 기본값을 사용합니다.", MessageType.None);
                 }
                 else if (tool == 3)
                 {
@@ -154,17 +155,24 @@ namespace MercenariesOfMars.Editor
                     EditorGUILayout.HelpBox("시작 칸에서 끝 칸까지 드래그해 직사각형 구역을 만듭니다. 아군이 구역에 들어오면 전투당 한 번 실행됩니다. 시작부터 구역 안에 있는 아군도 발동합니다.", MessageType.Info);
                 }
                 else if (tool == 4) EditorGUILayout.HelpBox("칸을 클릭하면 승리 조건을 목표 칸 도달로 설정합니다. 아군 전멸 시에는 패배합니다.", MessageType.Info);
-                else
+                else if(tool==5)
                 {
                     previewMovement = EditorGUILayout.IntSlider("임시 이동력", previewMovement, 0, 30);
                     EditorGUILayout.HelpBox("유닛을 클릭하면 해당 캐릭터 이동력으로, 빈 칸을 클릭하면 임시 이동력으로 범위를 계산합니다. 다른 유닛은 통과하지 않습니다. Esc로 해제합니다.", MessageType.Info);
                     if (previewStart.HasValue) EditorGUILayout.LabelField($"시작 {previewStart} · 도달 가능 {Mathf.Max(0, reachable.Count-1)}칸");
                 }
+                else
+                {
+                    deploymentId=EditorGUILayout.TextField("출격 ID 접두어",deploymentId);
+                    EditorGUILayout.HelpBox("좌클릭·드래그로 파란 출격 칸을 추가하고 우클릭으로 제거합니다. 고정 유닛·구조물·이동 불가 칸과 겹칠 수 없습니다. 플레이 시 영입 아군을 선택해 배치합니다.",MessageType.Info);
+                    var so=new SerializedObject(map);so.Update();MapPropertyLabels.Field(so,"testRecruitedAllies");if(so.ApplyModifiedProperties())RefreshMap();
+                    EditorGUILayout.HelpBox("위 명단은 맵·스테이지 단독 테스트용입니다. 실제 캠페인에서는 캠페인의 초기 영입 아군과 플레이 중 영입한 아군만 표시됩니다. 파일럿 단독 에셋이 아닌 기체+파일럿 유닛 편성을 등록하세요.",MessageType.Info);
+                }
             }
             else if (tab == 2)
             {
                 var so = new SerializedObject(map); so.Update();
-                foreach (string name in new[] { "units", "structures", "eventRegions", "terrainCells" }) MapPropertyLabels.Field(so, name);
+                foreach (string name in new[] { "units", "deploymentSlots", "testRecruitedAllies", "structures", "eventRegions", "terrainCells" }) MapPropertyLabels.Field(so, name);
                 if (so.ApplyModifiedProperties()) RefreshMap();
             }
             else
@@ -197,11 +205,14 @@ namespace MercenariesOfMars.Editor
                 Color color = t != null ? t.color : new Color(.45f,.65f,.35f);
                 if (display == 3) color = cachedGrid != null && cachedGrid.IsWalkable(c) ? new Color(.3f,.6f,.35f) : new Color(.7f,.2f,.2f);
                 if (reachable.Contains(c)) color = Color.Lerp(color, Color.cyan, .65f);
+                var slot=map.deploymentSlots.FirstOrDefault(s=>s!=null && s.cell==c);
+                if(slot!=null) color=Color.Lerp(color,new Color(.1f,.4f,1),.75f);
                 EditorGUI.DrawRect(r, color);
                 var s = map.StructureAt(c); var u = map.units.FirstOrDefault(v => v != null && v.cell == c);
                 string text = display == 1 ? (cachedGrid != null && cachedGrid.IsWalkable(c) ? cachedGrid.MovementCost(c).ToString() : "×")
                     : display == 2 ? $"명{cachedGrid?.AccuracyModifier(c):+0;-0;0}\n방{cachedGrid?.DefenseModifier(c):+0;-0;0}" : "";
                 if (s != null) text += "\n구조";
+                if(slot!=null) text="출격\n"+slot.id;
                 if (u != null) text = (u.character != null && u.character.faction == Faction.Enemy ? "적" : "아군") + "\n" + u.id;
                 if (map.eventRegions.Any(v => v != null && v.area.Contains(c))) text += "\n사건";
                 if (map.victoryCondition == MapVictoryCondition.ReachCell && map.goalCell == c) text += "\n목표";
@@ -266,7 +277,8 @@ namespace MercenariesOfMars.Editor
             else if (tool == 2)
             {
                 if (erase) map.units.RemoveAll(u => u != null && u.cell == cell);
-                else if (character != null && cachedGrid != null && cachedGrid.IsWalkable(cell) && map.StructureAt(cell) == null && !map.units.Any(u => u != null && u.cell == cell))
+                else if (character != null && cachedGrid != null && cachedGrid.IsWalkable(cell) && map.StructureAt(cell) == null && !map.units.Any(u => u != null && u.cell == cell)
+                    && !map.deploymentSlots.Any(s=>s!=null && s.cell==cell))
                 {
                     string prefix = string.IsNullOrWhiteSpace(unitId) ? "유닛" : unitId.Trim(), id = prefix; int n = 2;
                     while (map.units.Any(u => u != null && u.id == id)) id = prefix + n++;
@@ -275,6 +287,16 @@ namespace MercenariesOfMars.Editor
             }
             else if (tool == 3 && erase) map.eventRegions.RemoveAll(r => r != null && r.area.Contains(cell));
             else if (tool == 4) { map.victoryCondition = erase ? MapVictoryCondition.EliminateEnemies : MapVictoryCondition.ReachCell; map.goalCell = cell; }
+            else if(tool==6)
+            {
+                if(erase) map.deploymentSlots.RemoveAll(s=>s!=null && s.cell==cell);
+                else if(map.CanPlaceDeploymentSlot(cell))
+                {
+                    string prefix=string.IsNullOrWhiteSpace(deploymentId)?"출격":deploymentId.Trim(),id=prefix;int n=2;
+                    while(map.units.Any(u=>u!=null && u.id==id) || map.deploymentSlots.Any(s=>s!=null && s.id==id))id=prefix+n++;
+                    map.deploymentSlots.Add(new AllyDeploymentSlot {id=id,cell=cell});
+                }
+            }
             Changed();
         }
         void Validate() { errors = map.ValidateMap(); warnings = map.ReachabilityWarnings(); tab = 3; }

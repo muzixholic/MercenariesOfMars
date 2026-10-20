@@ -20,6 +20,9 @@ namespace MercenariesOfMars.Editor
                     if (property.FindPropertyRelative("speakerPilot").objectReferenceValue!=null || property.FindPropertyRelative("speakerCharacter").objectReferenceValue != null) yield return "portraitId";
                     yield return "text"; break;
                 case EventCommandKind.Wait: yield return "seconds"; break;
+                case EventCommandKind.IncreaseMaxUpgradeStage: yield return "upgradeStageIncrease";break;
+                case EventCommandKind.RecruitAlly:case EventCommandKind.RemoveAlly:yield return "rosterAlly";break;
+                case EventCommandKind.SetDeploymentBlocked:yield return "rosterAlly";yield return "deploymentBlocked";break;
                 case EventCommandKind.ChangeHp: yield return "unitId"; yield return "amount"; break;
                 case EventCommandKind.SetFlag: yield return "flag"; yield return "flagValue"; break;
                 case EventCommandKind.BranchFlag: yield return "flag"; yield return "flagValue"; yield return "jumpTo"; break;
@@ -84,9 +87,9 @@ namespace MercenariesOfMars.Editor
         }
         static string Label(string field) => field switch
         {
-            "kind" => "명령", "speaker" => "화자 이름（직접 입력）", "text" => "대사 내용", "unitId" => "대상 유닛 ID",
+            "kind" => "명령", "rosterAlly"=>"대상 아군 편성", "deploymentBlocked"=>"출격 선택 제한（끄면 허용）", "speaker" => "화자 이름（직접 입력）", "text" => "대사 내용", "unitId" => "대상 유닛 ID",
             "targetId" => "공격 대상 ID", "skill" => "사용 스킬", "seconds" => "대기 시간（초）", "amount" => "체력 변화 / 체력 이하 조건",
-            "cell" => "목적지", "flag" => "플래그 이름", "flagValue" => "플래그 값", "jumpTo" => "분기 명령 번호", _ => field
+            "cell" => "목적지", "flag" => "플래그 이름", "flagValue" => "플래그 값", "jumpTo" => "분기 명령 번호", "upgradeStageIncrease"=>"최대 개조 단계 증가량", _ => field
         };
     }
 }

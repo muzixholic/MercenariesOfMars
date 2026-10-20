@@ -60,6 +60,15 @@ namespace MercenariesOfMars.Tests
             yield return Finish(runner);
             Assert.That(battle.Find("아군").Hp, Is.EqualTo(30)); Assert.That(runner.LastError, Is.Null);
         }
+        [UnityTest] public IEnumerator 캠페인없는_개조상한명령은_앞선명령도_실행하지않고_안내한다()
+        {
+            var battle=Battle();var runner=Runner();
+            var script=Sequence(new EventCommand {kind=EventCommandKind.ChangeHp,unitId="아군",amount=-5},
+                new EventCommand {kind=EventCommandKind.IncreaseMaxUpgradeStage,upgradeStageIncrease=5});
+            Assert.That(runner.Play(script,battle),Is.False);Assert.That(runner.IsRunning,Is.False);
+            Assert.That(runner.LastError,Does.Contain("캠페인"));Assert.That(battle.Find("아군").Hp,Is.EqualTo(30));
+            yield return null;
+        }
         [UnityTest] public IEnumerator 대사확인_전에는_다음명령을_실행하지_않는다()
         {
             var battle = Battle(); var runner = Runner();
