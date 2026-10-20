@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993cc02ee6c8943d1b24d022c9063eca, type: 3}
+  m_Name: "10_\uC624\uB974\uD53C\uB12C"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.PilotDefinition
+  price: 0
+  displayName: "\uC624\uB974\uD53C\uB12C"
+  level: 1
+  experience: 0
+  attack: 10
+  defense: 3
+  accuracy: 100
+  evasion: 1
+  growthPreset: {fileID: 0}
+  attackGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  defenseGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  accuracyGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  evasionGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  attackAt99: 108
+  defenseAt99: 101
+  accuracyAt99: 198
+  evasionAt99: 99
+  portraits: []
+  description: "\uB098\uC774: 25\uC138\n\uACC4\uAE09: \uC911\uC704\n\uB2F4\uB2F9: \uBC29\uC5B4\uC804 / \uD638\uC704\uC791\uC804\n\uC18C\uC18D: \uB124\uBDF8\uB77C \uBD80\uB300\n\n\uADF9\uB3C4\uB85C \uAC15\uD55C \uCC45\uC784\uAC10\uACFC \uC778\uB0B4\uC2EC\uC744 \uAC00\uC9C4 \uBC29\uC5B4\uC804 \uC804\uBB38\uAC00. \uB124\uBDF8\uB77C\uC758 \uC704\uD5D8\uD55C \uC791\uC804\uC5D0 \uBC18\uB300\uD558\uBA74\uC11C\uB3C4 \uB3D9\uB8CC\uB97C \uC9C0\uD0A4\uAE30 \uC704\uD574 \uC5B8\uC81C\uB098 \uCD5C\uC804\uC120\uC5D0 \uC120\uB2E4. \uC790\uC5D8\uB9AC\uCE74\uC640 \uC624\uB79C \uC778\uC5F0\uC774 \uC788\uC73C\uBA70, \uADF8\uB140\uAC00 \uAE30\uC5B5\uC744 \uC783\uAE30 \uC804\uC758 \uBAA8\uC2B5\uC744 \uC54C\uACE0 \uC788\uB2E4.\n\n\uC228\uACA8\uC9C4 \uAC08\uB4F1: \uC790\uC5D8\uB9AC\uCE74\uAC00 \uC78A\uC5B4\uBC84\uB9B0 \uACFC\uAC70\uC758 \uC9C4\uC2E4\uC744 \uC77C\uBD80 \uC54C\uACE0 \uC788\uC9C0\uB9CC \uB9D0\uD558\uC9C0 \uC54A\uACE0 \uC788\uB2E4."

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993cc02ee6c8943d1b24d022c9063eca, type: 3}
+  m_Name: "03_\uBA54\uB974\uB514\uC548"
+  m_EditorClassIdentifier: MercenariesOfMars.Runtime::MercenariesOfMars.PilotDefinition
+  price: 0
+  displayName: "\uBA54\uB974\uB514\uC548"
+  level: 1
+  experience: 0
+  attack: 10
+  defense: 3
+  accuracy: 100
+  evasion: 1
+  growthPreset: {fileID: 0}
+  attackGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  defenseGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  accuracyGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  evasionGrowth: {fileID: 11400000, guid: 1eef8c08488824836b3825938ed80a8c, type: 2}
+  attackAt99: 108
+  defenseAt99: 101
+  accuracyAt99: 198
+  evasionAt99: 99
+  portraits: []
+  description: "\uB098\uC774: 21\uC138\n\uACC4\uAE09: \uC18C\uC704\n\uB2F4\uB2F9: \uAC15\uC2B5 / \uB3CC\uD30C\uC804\n\uC18C\uC18D: \uB124\uBDF8\uB77C \uBD80\uB300\n\n\uAD70\uC0AC\uD559\uAD50 \uAE30\uB85D\uC744 \uC5EC\uB7EC \uCC28\uB840 \uACBD\uC2E0\uD55C \uCC9C\uC7AC \uC870\uC885\uC0AC. \uC704\uC0C1\uAE30\uB3D9\uC744 \uC774\uC6A9\uD55C \uACE0\uC18D \uAC15\uC2B5\uC5D0 \uB6F0\uC5B4\uB098\uC9C0\uB9CC \uAE30\uCCB4 \uC548\uC804\uD55C\uACC4\uB97C \uBB34\uC2DC\uD558\uB294 \uACBD\uD5A5\uC774 \uC788\uB2E4. \uC790\uC2E0\uC758 \uB2A5\uB825\uC744 \uC99D\uBA85\uD558\uB824\uB294 \uC695\uB9DD\uC774 \uAC15\uD558\uBA70, \uC790\uC5D8\uB9AC\uCE74\uC5D0\uAC8C \uC778\uC815\uBC1B\uACE0 \uC2F6\uC5B4 \uD55C\uB2E4.\n\n\uC228\uACA8\uC9C4 \uAC08\uB4F1: \uACFC\uAC70 \uBB34\uB9AC\uD55C \uAC00\uC18D\uC73C\uB85C \uB3D9\uB8CC \uC870\uC885\uC0AC\uB97C \uB2E4\uCE58\uAC8C \uD55C \uC0AC\uACE0\uAC00 \uC788\uB2E4."
